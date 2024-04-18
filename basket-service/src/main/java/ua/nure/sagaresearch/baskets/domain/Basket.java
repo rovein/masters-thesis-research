@@ -2,6 +2,7 @@ package ua.nure.sagaresearch.baskets.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import javax.persistence.Access;
@@ -42,9 +43,13 @@ public class Basket {
     private Long version;
 
     public Basket() {
+        clearProductEntries();
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    public void clearProductEntries() {
         this.totalQuantity = 0L;
         this.totalPrice = Money.ZERO;
         this.productEntries = Collections.emptyMap();
-        this.creationTime = System.currentTimeMillis();
     }
 }

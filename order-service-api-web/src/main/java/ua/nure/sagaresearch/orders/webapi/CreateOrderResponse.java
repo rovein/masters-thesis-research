@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CreateOrderRequest {
-    private Long basketId;
-    private String shippingType;
-    private String paymentType;
-    private String shippingAddress;
+public class CreateOrderResponse {
+  private Long orderId;
 }

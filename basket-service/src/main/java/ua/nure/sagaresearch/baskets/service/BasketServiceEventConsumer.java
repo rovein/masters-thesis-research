@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.orders.domain.events.OrderPlacedEvent;
+import ua.nure.sagaresearch.orders.domain.events.OrderPlacementRequestedEvent;
 
 @Service("orderEventConsumer")
 public class BasketServiceEventConsumer {
@@ -26,6 +28,9 @@ public class BasketServiceEventConsumer {
                 .forAggregateType("ua.nure.sagaresearch.products.domain.Product")
                     .onEvent(ProductBasketAdditionValidatedEvent.class, this::handleProductBasketAdditionValidatedEvent)
                     .onEvent(ProductBasketAdditionValidationFailedEvent.class, this::handleProductBasketAdditionValidationFailedEvent)
+                .andForAggregateType("ua.nure.sagaresearch.orders.domain.Order")
+                    .onEvent(OrderPlacementRequestedEvent.class, this::handleOrderPlacementRequestedEvent)
+                    .onEvent(OrderPlacedEvent.class, this::handleOrderPlacedEvent)
                 .build();
     }
 
@@ -46,5 +51,27 @@ public class BasketServiceEventConsumer {
                 .formatted(LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId));
 
         basketService.removeProductEntryWithinQuantity(basketId, productId, quantity, pricePerUnit);
+    }
+
+    private void handleOrderPlacementRequestedEvent(DomainEventEnvelope<OrderPlacementRequestedEvent> domainEventEnvelope) {
+        var event = domainEventEnvelope.getEvent();
+        Long basketId = event.getBasketId();
+        Long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
+
+        logger.info("{} Received {}, checking out basket {} for order {}",
+                LoggingUtils.PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
+
+        basketService.checkOutBasket(basketId, orderId);
+    }
+
+    private void handleOrderPlacedEvent(DomainEventEnvelope<OrderPlacedEvent> domainEventEnvelope) {
+        var event = domainEventEnvelope.getEvent();
+        Long basketId = event.getBasketId();
+        Long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
+
+        logger.info("{} Received {} event, checking in basket {} for order {}",
+                LoggingUtils.PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
+
+        basketService.checkInBasket(basketId, orderId);
     }
 }

@@ -5,9 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ua.nure.sagaresearch.baskets.domain.Basket;
+import ua.nure.sagaresearch.baskets.domain.BasketIsEmptyException;
 import ua.nure.sagaresearch.baskets.domain.BasketRepository;
-import ua.nure.sagaresearch.baskets.domain.ProductBasketEntry;
+import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
+import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import javax.transaction.Transactional;
@@ -61,14 +64,6 @@ public class BasketService {
         return basket;
     }
 
-    private void publishProductAddedToBasketEvent(Long productId, Long totalQuantity, Long quantity, Money pricePerUnit, Basket basket) {
-        ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, totalQuantity, quantity, pricePerUnit);
-
-        logger.info("Product {} added to basket {} successfully, publishing {}", productId, basket.getId(), event.getClass().getSimpleName());
-
-        domainEventPublisher.publish(Basket.class, basket.getId(), Collections.singletonList(event));
-    }
-
     @Transactional
     public void removeProductEntryWithinQuantity(Long basketId, Long productId, Long quantity, Money pricePerUnit) {
         basketRepository.findById(basketId)
@@ -84,6 +79,36 @@ public class BasketService {
                     });
                     resetTotalPriceAndQuantity(basket);
                 });
+    }
+
+    @Transactional
+    public void checkOutBasket(Long basketId, Long orderId) {
+        Basket basket = basketRepository.findById(basketId).orElseThrow();
+        if (basket.getProductEntries().isEmpty()) {
+            throw new BasketIsEmptyException("Basket %s is empty, order can't be placed".formatted(basket));
+        }
+
+        BasketCheckedOutEvent event = new BasketCheckedOutEvent(orderId, basket.getTotalPrice(), basket.getProductEntries());
+        logger.info("{} Checking out basket {} for order {}, publishing {}",
+                LoggingUtils.PLACE_ORDER_PREFIX, basketId, orderId, event.getClass().getSimpleName());
+        domainEventPublisher.publish(Basket.class, basketId, Collections.singletonList(event));
+    }
+
+    @Transactional
+    public void checkInBasket(Long basketId, Long orderId) {
+        Basket basket = basketRepository.findById(basketId).orElseThrow();
+        basket.clearProductEntries();
+
+        logger.info("{} Basket {} successfully checked in and cleared, order {} is now pending for payment",
+                LoggingUtils.PLACE_ORDER_PREFIX, basketId, orderId);
+    }
+
+    private void publishProductAddedToBasketEvent(Long productId, Long totalQuantity, Long quantity, Money pricePerUnit, Basket basket) {
+        ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, totalQuantity, quantity, pricePerUnit);
+
+        logger.info("Product {} added to basket {} successfully, publishing {}", productId, basket.getId(), event.getClass().getSimpleName());
+
+        domainEventPublisher.publish(Basket.class, basket.getId(), Collections.singletonList(event));
     }
 
     private static void resetTotalPriceAndQuantity(Basket basket) {
