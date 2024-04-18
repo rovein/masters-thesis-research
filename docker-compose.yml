@@ -133,11 +133,6 @@ services:
       - MYSQL_USER=mysqluser
       - MYSQL_PASSWORD=mysqlpw
 
-  mongodb:
-    image: mongo:5.0.6
-    ports:
-      - "27017:27017"
-
   cdc-service:
     env_file:
       - ${ENV_FILE:-docker-compose-env-files/empty.env}

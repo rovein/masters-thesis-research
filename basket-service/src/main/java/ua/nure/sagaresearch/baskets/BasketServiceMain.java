@@ -1,9 +1,9 @@
 package ua.nure.sagaresearch.baskets;
 
-import ua.nure.sagaresearch.baskets.web.BasketWebConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import ua.nure.sagaresearch.baskets.web.BasketWebConfiguration;
 
 @SpringBootApplication
 @Import({BasketServiceConfiguration.class, BasketWebConfiguration.class})
