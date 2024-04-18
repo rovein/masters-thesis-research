@@ -36,8 +36,8 @@ public class BasketServiceEventConsumer {
 
     public void handleProductBasketAdditionValidatedEvent(DomainEventEnvelope<ProductBasketAdditionValidatedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
-        logger.info("%s Received product addition validation event, transaction completed successfully for productId %s and basketId %s"
-                .formatted(LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, domainEventEnvelope.getAggregateId(), event.getBasketId()));
+        logger.info("{} Received {}, transaction completed successfully for productId {} and basketId {}",
+                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
     }
 
     public void handleProductBasketAdditionValidationFailedEvent(DomainEventEnvelope<ProductBasketAdditionValidationFailedEvent> domainEventEnvelope) {
@@ -47,8 +47,8 @@ public class BasketServiceEventConsumer {
         Long quantity = event.getQuantity();
         Money pricePerUnit = event.getPricePerUnit();
 
-        logger.info("%s Received product addition validation failed event, performing compensation actions for productId %s and basketId %s"
-                .formatted(LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId));
+        logger.info("{} Received {}, performing compensation actions for productId {} and basketId {}",
+                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId);
 
         basketService.removeProductEntryWithinQuantity(basketId, productId, quantity, pricePerUnit);
     }

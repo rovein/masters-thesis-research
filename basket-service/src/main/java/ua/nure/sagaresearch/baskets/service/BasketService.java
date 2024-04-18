@@ -41,7 +41,7 @@ public class BasketService {
 
     @Transactional
     public Basket addProductToBasket(Long basketId, Long productId, Long quantity, Money pricePerUnit) {
-        logger.info("Adding product {} for basket {}", productId, basketId);
+        logger.info("{} Adding product {} for basket {}", LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId);
 
         Basket basket = basketRepository.findById(basketId).orElseThrow();
 
@@ -106,7 +106,8 @@ public class BasketService {
     private void publishProductAddedToBasketEvent(Long productId, Long totalQuantity, Long quantity, Money pricePerUnit, Basket basket) {
         ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, totalQuantity, quantity, pricePerUnit);
 
-        logger.info("Product {} added to basket {} successfully, publishing {}", productId, basket.getId(), event.getClass().getSimpleName());
+        logger.info("{} Product {} added to basket {} successfully, publishing {}",
+                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basket.getId(), event.getClass().getSimpleName());
 
         domainEventPublisher.publish(Basket.class, basket.getId(), Collections.singletonList(event));
     }

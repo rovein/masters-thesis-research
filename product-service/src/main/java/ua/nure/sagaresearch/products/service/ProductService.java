@@ -7,6 +7,7 @@ import nure.ua.sagaresearch.products.domain.events.ProductEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.products.domain.Product;
 import ua.nure.sagaresearch.products.domain.ProductRepository;
@@ -43,7 +44,8 @@ public class ProductService {
     }
 
     private void publishEvent(ProductEvent event, Long productId) {
-        logger.info("Finished validation, publishing {} for productId {}", event.getClass().getSimpleName(), productId);
+        logger.info("{} Finished validation, publishing {} for productId {}",
+                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));
     }
 }

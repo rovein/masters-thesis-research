@@ -6,6 +6,7 @@ import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
+import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.products.service.ProductService;
 
 public class ProductsEventConsumer {
@@ -28,7 +29,8 @@ public class ProductsEventConsumer {
     private void productAddedToBasketEventHandler(DomainEventEnvelope<ProductAddedToBasketEvent> domainEventEnvelope) {
         ProductAddedToBasketEvent event = domainEventEnvelope.getEvent();
         long basketId = Long.parseLong(domainEventEnvelope.getAggregateId());
-        logger.info("Handling {} for basket {}", event.getClass().getSimpleName(), basketId);
+        logger.info("{} Handling {} for basket {}",
+                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), basketId);
 
         productService.validateProductAddedToBasket(
                 event.getProductId(),
