@@ -1,5 +1,7 @@
 package ua.nure.sagaresearch.orders.service;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
+
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
@@ -8,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
-import ua.nure.sagaresearch.common.domain.LoggingUtils;
+import ua.nure.sagaresearch.common.util.LoggingUtils;
 
 import java.util.Arrays;
 
@@ -31,8 +33,8 @@ public class OrderServiceEventConsumer {
     private void handleBasketCheckedOutEvent(DomainEventEnvelope<BasketCheckedOutEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
         Long basketId = Long.parseLong(domainEventEnvelope.getAggregateId());
-        logger.info("{} Received {} for basket {} and order {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, event.getOrderId());
+        log(logger, "{} Received {} for basket {} and order {}",
+                PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, event.getOrderId());
         orderService.placeOrder(event.getOrderId(), basketId, event.getTotalPrice(), event.getProductEntries());
     }
 
@@ -40,8 +42,8 @@ public class OrderServiceEventConsumer {
         var event = domainEventEnvelope.getEvent();
         var orderId = event.getOrderId();
         var productIds = Arrays.toString(domainEventEnvelope.getAggregateId().split(","));
-        logger.info("{} Received {} for order {} and product IDs: {}",
-                LoggingUtils.CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId, productIds);
+        log(logger, "{} Received {} for order {} and product IDs: {}",
+                CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId, productIds);
         orderService.approveOrder(orderId);
     }
 }

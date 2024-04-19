@@ -1,5 +1,9 @@
 package ua.nure.sagaresearch.baskets.service;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
+
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +14,6 @@ import ua.nure.sagaresearch.baskets.domain.BasketRepository;
 import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
 import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
-import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import javax.transaction.Transactional;
@@ -41,7 +44,8 @@ public class BasketService {
 
     @Transactional
     public Basket addProductToBasket(Long basketId, Long productId, Long quantity, Money pricePerUnit) {
-        logger.info("{} Adding product {} for basket {}", LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId);
+        log(logger, "{} Adding product {} for basket {}",
+                ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId);
 
         Basket basket = basketRepository.findById(basketId).orElseThrow();
 
@@ -89,8 +93,8 @@ public class BasketService {
         }
 
         BasketCheckedOutEvent event = new BasketCheckedOutEvent(orderId, basket.getTotalPrice(), basket.getProductEntries());
-        logger.info("{} Checking out basket {} for order {}, publishing {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, basketId, orderId, event.getClass().getSimpleName());
+        log(logger, "{} Checking out basket {} for order {}, publishing {}",
+                PLACE_ORDER_PREFIX, basketId, orderId, event.getClass().getSimpleName());
         domainEventPublisher.publish(Basket.class, basketId, Collections.singletonList(event));
     }
 
@@ -99,15 +103,15 @@ public class BasketService {
         Basket basket = basketRepository.findById(basketId).orElseThrow();
         basket.clearProductEntries();
 
-        logger.info("{} Basket {} successfully checked in and cleared, order {} is now pending for payment",
-                LoggingUtils.PLACE_ORDER_PREFIX, basketId, orderId);
+        log(logger, "{} Basket {} successfully checked in and cleared, order {} is now pending for payment",
+                PLACE_ORDER_PREFIX, basketId, orderId);
     }
 
     private void publishProductAddedToBasketEvent(Long productId, Long totalQuantity, Long quantity, Money pricePerUnit, Basket basket) {
         ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, totalQuantity, quantity, pricePerUnit);
 
-        logger.info("{} Product {} added to basket {} successfully, publishing {}",
-                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, productId, basket.getId(), event.getClass().getSimpleName());
+        log(logger, "{} Product {} added to basket {} successfully, publishing {}",
+                ADD_PRODUCT_TO_BASKET_PREFIX, productId, basket.getId(), event.getClass().getSimpleName());
 
         domainEventPublisher.publish(Basket.class, basket.getId(), Collections.singletonList(event));
     }

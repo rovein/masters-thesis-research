@@ -1,5 +1,7 @@
 package ua.nure.sagaresearch.products.service;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
+
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
@@ -8,7 +10,7 @@ import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ua.nure.sagaresearch.common.domain.LoggingUtils;
+import ua.nure.sagaresearch.common.util.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
 import ua.nure.sagaresearch.products.domain.Product;
@@ -48,8 +50,8 @@ public class ProductService {
     }
 
     private void publishEvent(ProductEvent event, Long productId) {
-        logger.info("{} Finished validation, publishing {} for productId {}",
-                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
+        log(logger, "{} Finished validation, publishing {} for productId {}",
+                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));
     }
 
@@ -59,8 +61,8 @@ public class ProductService {
         productRepository.saveAll(productsFromOrder);
 
         ProductQuantityUpdatedEvent event = new ProductQuantityUpdatedEvent(orderId);
-        logger.info("{} Updated products quantity to approve the order {}, publishing {}",
-                LoggingUtils.CONFIRM_PAYMENT_PREFIX, orderId, event.getClass().getSimpleName());
+        log(logger, "{} Updated products quantity to approve the order {}, publishing {}",
+                CONFIRM_PAYMENT_PREFIX, orderId, event.getClass().getSimpleName());
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 

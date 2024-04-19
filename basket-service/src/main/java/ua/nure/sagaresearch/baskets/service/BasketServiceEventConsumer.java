@@ -1,5 +1,9 @@
 package ua.nure.sagaresearch.baskets.service;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
+
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
@@ -8,7 +12,6 @@ import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidati
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.events.OrderPlacedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderPlacementRequestedEvent;
@@ -36,8 +39,8 @@ public class BasketServiceEventConsumer {
 
     public void handleProductBasketAdditionValidatedEvent(DomainEventEnvelope<ProductBasketAdditionValidatedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
-        logger.info("{} Received {}, transaction completed successfully for productId {} and basketId {}",
-                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
+        log(logger, "{} Received {}, transaction completed successfully for productId {} and basketId {}",
+                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
     }
 
     public void handleProductBasketAdditionValidationFailedEvent(DomainEventEnvelope<ProductBasketAdditionValidationFailedEvent> domainEventEnvelope) {
@@ -47,8 +50,8 @@ public class BasketServiceEventConsumer {
         Long quantity = event.getQuantity();
         Money pricePerUnit = event.getPricePerUnit();
 
-        logger.info("{} Received {}, performing compensation actions for productId {} and basketId {}",
-                LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId);
+        log(logger, "{} Received {}, performing compensation actions for productId {} and basketId {}",
+                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId);
 
         basketService.removeProductEntryWithinQuantity(basketId, productId, quantity, pricePerUnit);
     }
@@ -58,8 +61,8 @@ public class BasketServiceEventConsumer {
         Long basketId = event.getBasketId();
         Long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
 
-        logger.info("{} Received {}, checking out basket {} for order {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
+        log(logger, "{} Received {}, checking out basket {} for order {}",
+                PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
 
         basketService.checkOutBasket(basketId, orderId);
     }
@@ -69,8 +72,8 @@ public class BasketServiceEventConsumer {
         Long basketId = event.getBasketId();
         Long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
 
-        logger.info("{} Received {} event, checking in basket {} for order {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
+        log(logger, "{} Received {} event, checking in basket {} for order {}",
+                PLACE_ORDER_PREFIX, event.getClass().getSimpleName(), basketId, orderId);
 
         basketService.checkInBasket(basketId, orderId);
     }

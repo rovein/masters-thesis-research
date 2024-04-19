@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.orders.service;
 
 import static java.util.Collections.singletonList;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
 
 import com.google.common.base.Preconditions;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
@@ -9,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
-import ua.nure.sagaresearch.common.domain.LoggingUtils;
+import ua.nure.sagaresearch.common.util.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;
@@ -44,8 +45,8 @@ public class OrderService {
         ResultWithEvents<Order> orderWithEvents = Order.createOrder(orderDetails);
         Order order = orderWithEvents.result;
         orderRepository.save(order);
-        logger.info("{} Creating the order, publishing the {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, orderWithEvents.events.get(0).getClass().getSimpleName());
+        log(logger, "{} Creating the order, publishing the {}",
+                PLACE_ORDER_PREFIX, orderWithEvents.events.get(0).getClass().getSimpleName());
         domainEventPublisher.publish(Order.class, order.getId(), orderWithEvents.events);
         return order;
     }
@@ -58,8 +59,8 @@ public class OrderService {
 
         OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent(basketId);
 
-        logger.info("{} Order {} is placed, publishing {} for basket {}",
-                LoggingUtils.PLACE_ORDER_PREFIX, orderId, orderPlacedEvent.getClass().getSimpleName(), basketId);
+        log(logger, "{} Order {} is placed, publishing {} for basket {}",
+                PLACE_ORDER_PREFIX, orderId, orderPlacedEvent.getClass().getSimpleName(), basketId);
         domainEventPublisher.publish(Order.class, orderId, Collections.singletonList(orderPlacedEvent));
     }
 
@@ -71,8 +72,8 @@ public class OrderService {
 
         OrderPaymentConfirmedEvent event = new OrderPaymentConfirmedEvent(order.getProductEntries());
 
-        logger.info("{} Payment is confirmed for order {}, state is {}, publishing {}",
-                LoggingUtils.CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
+        log(logger, "{} Payment is confirmed for order {}, state is {}, publishing {}",
+                CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
 
         domainEventPublisher.publish(Order.class, orderId, Collections.singletonList(event));
 
@@ -85,8 +86,8 @@ public class OrderService {
         order.onPaymentSuccess();
 
         OrderApprovedEvent event = new OrderApprovedEvent(order.getOrderDetails());
-        logger.info("{} Order {} is marked as {}, publishing {}",
-                LoggingUtils.CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
+        log(logger, "{} Order {} is marked as {}, publishing {}",
+                CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(event));
     }
