@@ -11,8 +11,10 @@ services:
         baseImageVersion: BUILD-15
     image: saga-research/order-service:${DOCKER_IMAGE_TAG:-latest}
     ports:
-      - "8081:8080"
+      - "8081:8081"
       - "5005:5005"
+    volumes:
+      - /Users/roman/Study/masters-thesis-research/logs:/logs
     depends_on:
       - mysql
       - kafka
@@ -42,8 +44,10 @@ services:
         baseImageVersion: BUILD-15
     image: saga-research/basket-service:${DOCKER_IMAGE_TAG:-latest}
     ports:
-      - "8082:8080"
+      - "8082:8082"
       - "5006:5006"
+    volumes:
+      - /Users/roman/Study/masters-thesis-research/logs:/logs
     depends_on:
       - mysql
       - kafka
@@ -73,8 +77,10 @@ services:
         baseImageVersion: BUILD-15
     image: saga-research/product-service:${DOCKER_IMAGE_TAG:-latest}
     ports:
-      - "8083:8080"
+      - "8083:8083"
       - "5007:5007"
+    volumes:
+      - /Users/roman/Study/masters-thesis-research/logs:/logs
     depends_on:
       - mysql
       - kafka
@@ -165,3 +171,42 @@ services:
       - "9411:9411"
     environment:
       JAVA_OPTS: -Xmx64m
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.13
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk-network
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.13
+    ports:
+      - "5000:5000"
+    volumes:
+      - /Users/roman/Study/masters-thesis-research/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - /Users/roman/Study/masters-thesis-research:/usr/share/logstash/config
+      - /Users/roman/Study/masters-thesis-research/logs:/usr/share/logstash/logs
+      - /Users/roman/Study/masters-thesis-research/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    command: [ "-f", "/usr/share/logstash/config/logstash.conf" ]
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.13
+    ports:
+      - "5601:5601"
+    depends_on:
+      - logstash
+    networks:
+      - elk-network
+
+networks:
+  elk-network:
+    driver: bridge
