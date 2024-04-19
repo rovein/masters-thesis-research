@@ -54,6 +54,12 @@ public class OrderController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PostMapping(value = "/orders/{orderId}/confirm")
+    public ResponseEntity<GetOrderResponse> confirmOrder(@PathVariable Long orderId) {
+        Order order = orderService.confirmPayment(orderId);
+        return makeSuccessfulResponse(order);
+    }
+
     @RequestMapping(value = "/orders/{orderId}/cancel", method = RequestMethod.POST)
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
         Order order = orderService.cancelOrder(orderId);
@@ -70,7 +76,8 @@ public class OrderController {
                 order.getId(),
                 order.getState(),
                 order.getOrderDetails().getBasketId(),
-                order.getTotalPrice()
+                order.getTotalPrice(),
+                order.getProductEntries().values()
         ), HttpStatus.OK);
     }
 }

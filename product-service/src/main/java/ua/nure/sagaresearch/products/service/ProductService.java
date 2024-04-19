@@ -4,16 +4,20 @@ import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ua.nure.sagaresearch.common.domain.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
 import ua.nure.sagaresearch.products.domain.Product;
 import ua.nure.sagaresearch.products.domain.ProductRepository;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -47,5 +51,22 @@ public class ProductService {
         logger.info("{} Finished validation, publishing {} for productId {}",
                 LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));
+    }
+
+    public void updateProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
+        Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
+        productsFromOrder.forEach(product -> product.decreaseQuantity(productEntries.get(product.getId()).getQuantity()));
+        productRepository.saveAll(productsFromOrder);
+
+        ProductQuantityUpdatedEvent event = new ProductQuantityUpdatedEvent(orderId);
+        logger.info("{} Updated products quantity to approve the order {}, publishing {}",
+                LoggingUtils.CONFIRM_PAYMENT_PREFIX, orderId, event.getClass().getSimpleName());
+        domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
+    }
+
+    private static String joinProductIds(Map<Long, ProductOrderEntry> productEntries) {
+        return productEntries.keySet().stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
     }
 }

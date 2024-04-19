@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
 import ua.nure.sagaresearch.common.domain.LoggingUtils;
+import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.products.service.ProductService;
 
 public class ProductsEventConsumer {
@@ -23,6 +24,8 @@ public class ProductsEventConsumer {
         return DomainEventHandlersBuilder
                 .forAggregateType("ua.nure.sagaresearch.baskets.domain.Basket")
                     .onEvent(ProductAddedToBasketEvent.class, this::productAddedToBasketEventHandler)
+                .andForAggregateType("ua.nure.sagaresearch.orders.domain.Order")
+                    .onEvent(OrderPaymentConfirmedEvent.class, this::handleOrderPaymentConfirmedEvent)
                 .build();
     }
 
@@ -39,5 +42,14 @@ public class ProductsEventConsumer {
                 event.getQuantity(),
                 event.getPricePerUnit()
         );
+    }
+
+    private void handleOrderPaymentConfirmedEvent(DomainEventEnvelope<OrderPaymentConfirmedEvent> domainEventEnvelope) {
+        OrderPaymentConfirmedEvent event = domainEventEnvelope.getEvent();
+        long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        logger.info("{} Handling {} for order {}",
+                LoggingUtils.CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId);
+
+        productService.updateProductsQuantityForOrder(orderId, event.getProductEntries());
     }
 }

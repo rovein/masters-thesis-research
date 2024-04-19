@@ -71,7 +71,7 @@ public class Order {
         return new ResultWithEvents<>(order, singletonList(orderPlacementRequestedEvent));
     }
 
-    public void noteCreditReserved() {
+    public void onPaymentSuccess() {
         this.state = OrderState.APPROVED;
     }
 

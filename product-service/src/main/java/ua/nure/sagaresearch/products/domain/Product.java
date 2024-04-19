@@ -1,5 +1,6 @@
 package ua.nure.sagaresearch.products.domain;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import ua.nure.sagaresearch.common.domain.Money;
@@ -44,5 +45,11 @@ public class Product {
         this.productQuantity = 0L;
         this.productPrice = Money.ZERO;
         this.productProperties = Collections.emptyMap();
+    }
+
+    public void decreaseQuantity(long decreaseValue) {
+        long newQuantity = productQuantity - decreaseValue;
+        Preconditions.checkState(newQuantity >= 0);
+        this.productQuantity = newQuantity;
     }
 }
