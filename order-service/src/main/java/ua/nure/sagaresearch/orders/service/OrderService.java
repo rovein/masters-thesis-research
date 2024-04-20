@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
-import ua.nure.sagaresearch.common.util.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;
@@ -94,7 +93,7 @@ public class OrderService {
 
     public void rejectOrder(Long orderId) {
         Order order = getOrder(orderId);
-        order.noteCreditReservationFailed();
+        order.onPaymentFailed();
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(new OrderRejectedEvent(order.getOrderDetails())));
     }

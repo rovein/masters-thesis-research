@@ -75,7 +75,7 @@ public class Order {
         this.state = OrderState.APPROVED;
     }
 
-    public void noteCreditReservationFailed() {
+    public void onPaymentFailed() {
         this.state = OrderState.REJECTED;
     }
 
