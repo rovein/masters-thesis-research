@@ -38,10 +38,10 @@ Check the `docker-compose.yml` file for required debugging ports:
 ## Architecture
 
 Here is the diagram that represents data model of the whole system:
-![DB microservices schema](images/DB_microservices_schema.png)
+![DB microservices schema](images/DB-microservices-schema.png)
 
 Here is the overview of the CDC service structure ([source](https://eventuate.io/docs/manual/eventuate-tram/latest/cdc-configuration.html)):
-![CDC service](images/CDC service.png)
+![CDC service](images/CDC-service.png)
 
 ## Dev notes
 
