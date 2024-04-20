@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import java.util.concurrent.TimeUnit;
 
 public final class LoggingUtils {
-    public static final String ADD_PRODUCT_TO_BASKET_PREFIX = "[Add Product to Basket SAGA]";
-    public static final String PLACE_ORDER_PREFIX = "[Place Order SAGA]";
-    public static final String CONFIRM_PAYMENT_PREFIX = "[Confirm Payment SAGA]";
+    public static final String ADD_PRODUCT_TO_BASKET_PREFIX = "[OUTBOX Add Product to Basket SAGA]";
+    public static final String PLACE_ORDER_PREFIX = "[OUTBOX Place Order SAGA]";
+    public static final String CONFIRM_PAYMENT_PREFIX = "[OUTBOX Confirm Payment SAGA]";
 
     /**
      * Util logging method that has small delay needed to correctly display the order of logs
