@@ -54,8 +54,8 @@ public class OrderController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping(value = "/orders/{orderId}/confirm")
-    public ResponseEntity<GetOrderResponse> confirmOrder(@PathVariable Long orderId) {
+    @PostMapping(value = "/orders/{orderId}/confirmPayment")
+    public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable Long orderId) {
         Order order = orderService.confirmPayment(orderId);
         return makeSuccessfulResponse(order);
     }
