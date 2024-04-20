@@ -19,7 +19,7 @@ public final class LoggingUtils {
      */
     @SneakyThrows
     public static void log(Logger logger, String format, Object... arguments) {
+        TimeUnit.MILLISECONDS.sleep(100L);
         logger.info(format, arguments);
-        TimeUnit.MILLISECONDS.sleep(200L);
     }
 }

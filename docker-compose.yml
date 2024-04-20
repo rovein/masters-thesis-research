@@ -22,6 +22,7 @@ services:
       - cdc-service
     restart: always
     environment:
+      TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
@@ -55,6 +56,7 @@ services:
       - cdc-service
     restart: always
     environment:
+      TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
@@ -87,6 +89,7 @@ services:
       - zookeeper
       - cdc-service
     environment:
+      TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
@@ -180,6 +183,7 @@ services:
     networks:
       - elk-network
     environment:
+      - TZ=Europe/Kiev
       - discovery.type=single-node
       - xpack.security.enabled=false
 
@@ -197,6 +201,8 @@ services:
       - elasticsearch
     networks:
       - elk-network
+    environment:
+      TZ: Europe/Kiev
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.13
@@ -206,6 +212,8 @@ services:
       - logstash
     networks:
       - elk-network
+    environment:
+      TZ: Europe/Kiev
 
 networks:
   elk-network:
