@@ -1,8 +1,6 @@
 version: '3'
 services:
   order-service:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     build:
       context: ./order-service/
       args:
@@ -35,8 +33,6 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
   basket-service:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     build:
       context: ./basket-service/
       args:
@@ -69,8 +65,6 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
   product-service:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     build:
       context: ./product-service/
       args:
@@ -102,8 +96,6 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
   zookeeper:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     image: "eventuateio/eventuate-zookeeper:0.18.0.RELEASE"
     ports:
       - 2181:2181
@@ -113,8 +105,6 @@ services:
       KAFKA_HEAP_OPTS: -Xmx64m
 
   kafka:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     image: "eventuateio/eventuate-kafka:0.18.0.RELEASE"
     ports:
       - 9092:9092
@@ -131,8 +121,6 @@ services:
       KAFKA_HEAP_OPTS: -Xmx192m
 
   mysql:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
     ports:
       - 3306:3306
@@ -143,8 +131,6 @@ services:
       - MYSQL_PASSWORD=mysqlpw
 
   cdc-service:
-    env_file:
-      - ${ENV_FILE:-docker-compose-env-files/empty.env}
     image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
     ports:
       - "8099:8080"
@@ -192,10 +178,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - /Users/roman/Study/masters-thesis-research:/usr/share/logstash/config
-      - /Users/roman/Study/masters-thesis-research/logs:/usr/share/logstash/logs
-      - /Users/roman/Study/masters-thesis-research/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ${PROJECT_ABSOLUTE_PATH}/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ${PROJECT_ABSOLUTE_PATH}:/usr/share/logstash/config
+      - ${PROJECT_ABSOLUTE_PATH}/logs:/usr/share/logstash/logs
+      - ${PROJECT_ABSOLUTE_PATH}/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     command: [ "-f", "/usr/share/logstash/config/logstash.conf" ]
     depends_on:
       - elasticsearch
