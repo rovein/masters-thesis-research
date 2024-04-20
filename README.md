@@ -35,6 +35,14 @@ Check the `docker-compose.yml` file for required debugging ports:
 
 `JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005`
 
+## Architecture
+
+Here is the diagram that represents data model of the whole system:
+![DB microservices schema](images/DB_microservices_schema.png)
+
+Here is the overview of the CDC service structure ([source](https://eventuate.io/docs/manual/eventuate-tram/latest/cdc-configuration.html)):
+![CDC service](images/CDC service.png)
+
 ## Dev notes
 
 1. Use `ua.nure.sagaresearch.common.util.LoggingUtils.log` wrapper for INFO logging purposes.
