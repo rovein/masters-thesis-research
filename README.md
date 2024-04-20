@@ -34,3 +34,7 @@ To configure remote JVM debugging in IntelliJ IDEA, create a Debug config as fol
 Check the `docker-compose.yml` file for required debugging ports:
 
 `JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005`
+
+## Dev notes
+
+1. Use `ua.nure.sagaresearch.common.util.LoggingUtils.log` wrapper for INFO logging purposes.
