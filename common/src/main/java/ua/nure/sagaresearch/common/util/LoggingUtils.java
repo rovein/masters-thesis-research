@@ -22,4 +22,8 @@ public final class LoggingUtils {
         TimeUnit.MILLISECONDS.sleep(100L);
         logger.info(format, arguments);
     }
+
+    private LoggingUtils() {
+        throw new UnsupportedOperationException();
+    }
 }

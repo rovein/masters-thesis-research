@@ -1,7 +1,9 @@
 package ua.nure.sagaresearch.orders.service;
 
 import static java.util.Collections.singletonList;
-import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
 import com.google.common.base.Preconditions;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;

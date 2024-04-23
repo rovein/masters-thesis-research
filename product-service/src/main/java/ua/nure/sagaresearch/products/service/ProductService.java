@@ -1,6 +1,8 @@
 package ua.nure.sagaresearch.products.service;
 
-import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
@@ -10,7 +12,6 @@ import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ua.nure.sagaresearch.common.util.LoggingUtils;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
 import ua.nure.sagaresearch.products.domain.Product;

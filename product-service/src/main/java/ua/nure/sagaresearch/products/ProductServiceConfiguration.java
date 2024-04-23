@@ -19,7 +19,8 @@ public class ProductServiceConfiguration {
     }
 
     @Bean("productsDomainEventDispatcher")
-    public DomainEventDispatcher productsDomainEventDispatcher(ProductsEventConsumer productsEventConsumer, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher productsDomainEventDispatcher(ProductsEventConsumer productsEventConsumer,
+                                                               DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("productServiceEvents", productsEventConsumer.domainEventHandlers());
     }
 }

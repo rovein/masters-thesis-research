@@ -1,6 +1,8 @@
 package ua.nure.sagaresearch.orders.service;
 
-import static ua.nure.sagaresearch.common.util.LoggingUtils.*;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
-import ua.nure.sagaresearch.common.util.LoggingUtils;
 
 import java.util.Arrays;
 

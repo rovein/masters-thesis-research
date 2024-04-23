@@ -27,7 +27,8 @@ import ua.nure.sagaresearch.baskets.service.BasketServiceEventConsumer;
 public class BasketServiceConfiguration {
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcher(BasketServiceEventConsumer basketServiceEventConsumer, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher domainEventDispatcher(BasketServiceEventConsumer basketServiceEventConsumer,
+                                                       DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("basketServiceEvents", basketServiceEventConsumer.domainEventHandlers());
     }
 

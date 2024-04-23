@@ -39,7 +39,8 @@ public class OrderConfiguration {
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcher(OrderServiceEventConsumer orderServiceEventConsumer, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher domainEventDispatcher(OrderServiceEventConsumer orderServiceEventConsumer,
+                                                       DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("orderServiceEvents", orderServiceEventConsumer.domainEventHandlers());
     }
 

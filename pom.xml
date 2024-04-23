@@ -20,6 +20,8 @@
         <eventuateMessagingKafkaVersion>0.18.0.RELEASE</eventuateMessagingKafkaVersion>
         <springCloudVersion>2021.0.2</springCloudVersion>
         <springDocOpenApiUiVersion>1.6.6</springDocOpenApiUiVersion>
+        <maven.checkstyle.plugin.version>3.2.1</maven.checkstyle.plugin.version>
+        <checkstyle.version>10.15.0</checkstyle.version>
     </properties>
 
     <modules>
@@ -36,8 +38,6 @@
         <module>product-service</module>
         <module>product-service-api-web</module>
         <module>product-service-api-messaging</module>
-
-        <module>end-to-end-tests</module>
     </modules>
 
     <dependencyManagement>
@@ -92,6 +92,44 @@
                     <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven.checkstyle.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <phase>verify</phase>
+                        <configuration>
+                            <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+                            <configLocation>checkstyle/checkstyle.xml</configLocation>
+                            <consoleOutput>true</consoleOutput>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configLocation>checkstyle/checkstyle.xml</configLocation>
+                    <failsOnError>true</failsOnError>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
