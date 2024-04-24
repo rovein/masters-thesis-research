@@ -14,7 +14,7 @@ import ua.nure.sagaresearch.products.service.ProductService;
 public class ProductServiceConfiguration {
 
     @Bean
-    public ProductsEventConsumer customerHistoryEventConsumer(ProductService productService) {
+    public ProductsEventConsumer productsEventConsumer(ProductService productService) {
         return new ProductsEventConsumer(productService);
     }
 
