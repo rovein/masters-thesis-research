@@ -76,6 +76,10 @@
             <version>${eventuateTramViewSupportVersion}</version>
         </dependency>
         <dependency>
+            <groupId>io.eventuate.local.java</groupId>
+            <artifactId>eventuate-local-java-spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ua.nure</groupId>
             <artifactId>order-service-api-web</artifactId>
             <version>0.1.0-SNAPSHOT</version>

@@ -57,6 +57,10 @@
             <artifactId>eventuate-tram-spring-events-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.eventuate.local.java</groupId>
+            <artifactId>eventuate-local-java-spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>20.0</version>
