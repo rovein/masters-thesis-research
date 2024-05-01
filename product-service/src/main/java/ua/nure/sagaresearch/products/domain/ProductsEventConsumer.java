@@ -10,6 +10,7 @@ import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
+import ua.nure.sagaresearch.orders.domain.events.OrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.products.service.ProductService;
 
@@ -29,6 +30,7 @@ public class ProductsEventConsumer {
                     .onEvent(ProductAddedToBasketEvent.class, this::productAddedToBasketEventHandler)
                 .andForAggregateType("ua.nure.sagaresearch.orders.domain.Order")
                     .onEvent(OrderPaymentConfirmedEvent.class, this::handleOrderPaymentConfirmedEvent)
+                    .onEvent(OrderCancellationRequestedEvent.class, this::handleOrderCancellationRequestedEvent)
                 .build();
     }
 
@@ -52,5 +54,12 @@ public class ProductsEventConsumer {
                 CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId);
 
         productService.reserveProductsQuantityForOrder(orderId, event.getProductEntries());
+    }
+
+    // TODO [Cancel Order SAGA] Step 3:
+    //  3.1 Here you are accepting the event. Retrieve event, orderId, log that you received it
+    //  3.2 Call the productService.restoreProductsQuantityForOrder
+    private void handleOrderCancellationRequestedEvent(DomainEventEnvelope<OrderCancellationRequestedEvent> domainEventEnvelope) {
+
     }
 }

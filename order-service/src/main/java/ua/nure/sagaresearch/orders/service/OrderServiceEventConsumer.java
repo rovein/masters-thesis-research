@@ -29,6 +29,7 @@ public class OrderServiceEventConsumer {
                     .onEvent(BasketCheckedOutEvent.class, this::handleBasketCheckedOutEvent)
                 .andForAggregateType("ua.nure.sagaresearch.products.domain.Product")
                     .onEvent(ProductQuantityReservedEvent.class, this::handleProductQuantityReservedEvent)
+                    .onEvent(ProductQuantityRestoredEvent.class, this::handleProductQuantityRestoredEvent)
                 .build();
     }
 
@@ -47,5 +48,12 @@ public class OrderServiceEventConsumer {
         log(logger, "{} Received {} for order {} and product IDs: {}",
                 CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId, productIds);
         orderService.approveOrder(orderId);
+    }
+
+    // TODO [Cancel Order SAGA] Step 5:
+    //  5.1 restore the event metadata, log it
+    //  5.2 Call orderService.cancelOrder (already implemented)
+    private void handleProductQuantityRestoredEvent(DomainEventEnvelope<ProductQuantityRestoredEvent> domainEventEnvelope) {
+
     }
 }

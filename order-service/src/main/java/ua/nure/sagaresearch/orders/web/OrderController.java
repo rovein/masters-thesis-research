@@ -60,9 +60,11 @@ public class OrderController {
         return makeSuccessfulResponse(order);
     }
 
-    @RequestMapping(value = "/orders/{orderId}/cancel", method = RequestMethod.POST)
+    // TODO [Cancel Order SAGA] Step 1:
+    //  1.1 accept cancel action and request the cancellation (already done)
+    @PostMapping(value = "/orders/{orderId}/cancel")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
-        Order order = orderService.cancelOrder(orderId);
+        Order order = orderService.requestCancellation(orderId);
         return makeSuccessfulResponse(order);
     }
 

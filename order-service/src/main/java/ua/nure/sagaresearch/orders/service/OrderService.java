@@ -93,11 +93,21 @@ public class OrderService {
                 orderId, singletonList(event));
     }
 
+    // TODO: remove it when Event Sourcing is implemented
     public void rejectOrder(Long orderId) {
         Order order = getOrder(orderId);
         order.onPaymentFailed();
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(new OrderRejectedEvent(order.getOrderDetails())));
+    }
+
+    // TODO [Cancel Order SAGA] Step 2:
+    //  2.1 Get the order
+    //  2.2 Change the state to CANCELLATION_REQUESTED (you have to add it to enum)
+    //  2.3 Publish the OrderCancellationRequestedEvent (it is present, you need to fill it with order.getProductEntries())
+    @Transactional
+    public Order requestCancellation(Long orderId) {
+        return null;
     }
 
     @Transactional

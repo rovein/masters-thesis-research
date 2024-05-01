@@ -72,6 +72,14 @@ public class ProductService {
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 
+    // TODO [Cancel Order SAGA] Step 4:
+    //  4.1 This method restores the product quantity for cancelled orders. It will be very similar to 'decrease..' one
+    //  4.2 Find all products and increase their quantity in the warehouse.
+    //  4.3 Log the results and publish the ProductQuantityRestoredEvent
+    public void restoreProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
+
+    }
+
     private static String joinProductIds(Map<Long, ProductOrderEntry> productEntries) {
         return productEntries.keySet().stream()
                 .map(String::valueOf)
