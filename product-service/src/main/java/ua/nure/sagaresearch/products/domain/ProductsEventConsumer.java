@@ -51,6 +51,6 @@ public class ProductsEventConsumer {
         log(logger, "{} Handling {} for order {}",
                 CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId);
 
-        productService.updateProductsQuantityForOrder(orderId, event.getProductEntries());
+        productService.reserveProductsQuantityForOrder(orderId, event.getProductEntries());
     }
 }
