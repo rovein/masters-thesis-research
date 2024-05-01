@@ -57,7 +57,7 @@ public class BasketService {
                 return newEntry;
             }
             oldEntry.increaseQuantity(quantity);
-            oldEntry.setPrice(oldEntry.getPrice().add(pricePerUnit.multiply(quantity)));
+            oldEntry.setPrice(pricePerUnit.multiply(oldEntry.getQuantity()));
             return new ProductBasketEntry(productId, oldEntry.getQuantity(), oldEntry.getPrice());
         });
 
@@ -69,17 +69,23 @@ public class BasketService {
     }
 
     @Transactional
-    public void removeProductEntryWithinQuantity(Long basketId, Long productId, Long quantity, Money pricePerUnit) {
+    public void removeProductEntry(Long basketId, Long productId) {
         basketRepository.findById(basketId)
                 .ifPresent(basket -> {
                     Map<Long, ProductBasketEntry> productEntries = basket.getProductEntries();
-                    productEntries.computeIfPresent(productId, (key, value) -> {
-                        if (quantity < value.getQuantity()) {
-                            var updatedQuantity = value.getQuantity() - quantity;
-                            var updatedPrice = value.getPrice().subtract(pricePerUnit.multiply(quantity));
-                            return new ProductBasketEntry(productId, updatedQuantity, updatedPrice);
-                        }
-                        return null;
+                    productEntries.remove(productId);
+                    resetTotalPriceAndQuantity(basket);
+                });
+    }
+
+    @Transactional
+    public void actualizeProductEntryPrice(Long basketId, Long productId, Money actualPricePerUnit) {
+        basketRepository.findById(basketId)
+                .ifPresent(basket -> {
+                    basket.getProductEntries().computeIfPresent(productId, (key, value) -> {
+                        Long quantity = value.getQuantity();
+                        value.setPrice(actualPricePerUnit.multiply(quantity));
+                        return value;
                     });
                     resetTotalPriceAndQuantity(basket);
                 });

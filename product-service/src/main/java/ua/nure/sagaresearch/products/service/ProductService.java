@@ -8,6 +8,7 @@ import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductBasketPriceHasChangedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +43,16 @@ public class ProductService {
 
     public void validateProductAddedToBasket(Long productId, Long basketId, Long totalProductQuantity, Long quantity, Money pricePerUnit) {
         productRepository.findById(productId)
-                .filter(product -> totalProductQuantity <= product.getProductQuantity())
-                .filter(product -> Objects.equals(pricePerUnit, product.getProductPrice()))
-                .map(product -> new ProductBasketAdditionValidatedEvent(basketId))
+                .map(product -> {
+                    Money actualProductPrice = product.getProductPrice();
+                    if (Objects.equals(pricePerUnit, actualProductPrice)) {
+                        return new ProductBasketAdditionValidatedEvent(basketId);
+                    }
+                    return new ProductBasketPriceHasChangedEvent(basketId, actualProductPrice);
+                })
                 .ifPresentOrElse(
                         event -> publishEvent(event, productId),
-                        () -> publishEvent(new ProductBasketAdditionValidationFailedEvent(basketId, quantity, pricePerUnit), productId));
+                        () -> publishEvent(new ProductBasketAdditionValidationFailedEvent(basketId), productId));
     }
 
     private void publishEvent(ProductEvent event, Long productId) {

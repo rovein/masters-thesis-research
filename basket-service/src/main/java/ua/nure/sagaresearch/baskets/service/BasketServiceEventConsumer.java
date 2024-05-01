@@ -9,6 +9,7 @@ import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductBasketPriceHasChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class BasketServiceEventConsumer {
         return DomainEventHandlersBuilder
                 .forAggregateType("ua.nure.sagaresearch.products.domain.Product")
                     .onEvent(ProductBasketAdditionValidatedEvent.class, this::handleProductBasketAdditionValidatedEvent)
+                    .onEvent(ProductBasketPriceHasChangedEvent.class, this::handleProductBasketPriceHasChangedEvent)
                     .onEvent(ProductBasketAdditionValidationFailedEvent.class, this::handleProductBasketAdditionValidationFailedEvent)
                 .andForAggregateType("ua.nure.sagaresearch.orders.domain.Order")
                     .onEvent(OrderPlacementRequestedEvent.class, this::handleOrderPlacementRequestedEvent)
@@ -43,17 +45,27 @@ public class BasketServiceEventConsumer {
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
     }
 
+    private void handleProductBasketPriceHasChangedEvent(DomainEventEnvelope<ProductBasketPriceHasChangedEvent> domainEventEnvelope) {
+        var event = domainEventEnvelope.getEvent();
+        Long productId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        Long basketId = event.getBasketId();
+        Money actualPricePerUnit = event.getActualPricePerUnit();
+
+        log(logger, "{} Received {}, updating price of product {} in basket {} to {}$",
+                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId, actualPricePerUnit.getAmount());
+
+        basketService.actualizeProductEntryPrice(basketId, productId, actualPricePerUnit);
+    }
+
     public void handleProductBasketAdditionValidationFailedEvent(DomainEventEnvelope<ProductBasketAdditionValidationFailedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
         Long productId = Long.parseLong(domainEventEnvelope.getAggregateId());
         Long basketId = event.getBasketId();
-        Long quantity = event.getQuantity();
-        Money pricePerUnit = event.getPricePerUnit();
 
         log(logger, "{} Received {}, performing compensation actions for productId {} and basketId {}",
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId);
 
-        basketService.removeProductEntryWithinQuantity(basketId, productId, quantity, pricePerUnit);
+        basketService.removeProductEntry(basketId, productId);
     }
 
     private void handleOrderPlacementRequestedEvent(DomainEventEnvelope<OrderPlacementRequestedEvent> domainEventEnvelope) {
