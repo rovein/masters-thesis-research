@@ -41,7 +41,7 @@ public class ProductService {
         return productRepository.findById(productId).orElseThrow();
     }
 
-    public void validateProductAddedToBasket(Long productId, Long basketId, Long totalProductQuantity, Long quantity, Money pricePerUnit) {
+    public void validateProductAddedToBasket(Long productId, Long basketId, Money pricePerUnit) {
         productRepository.findById(productId)
                 .map(product -> {
                     Money actualProductPrice = product.getProductPrice();
@@ -51,11 +51,11 @@ public class ProductService {
                     return new ProductBasketPriceHasChangedEvent(basketId, actualProductPrice);
                 })
                 .ifPresentOrElse(
-                        event -> publishEvent(event, productId),
-                        () -> publishEvent(new ProductBasketAdditionValidationFailedEvent(basketId), productId));
+                        event -> publishProductAddedToBasketValidationResult(event, productId),
+                        () -> publishProductAddedToBasketValidationResult(new ProductBasketAdditionValidationFailedEvent(basketId), productId));
     }
 
-    private void publishEvent(ProductEvent event, Long productId) {
+    private void publishProductAddedToBasketValidationResult(ProductEvent event, Long productId) {
         log(logger, "{} Finished validation, publishing {} for productId {}",
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));

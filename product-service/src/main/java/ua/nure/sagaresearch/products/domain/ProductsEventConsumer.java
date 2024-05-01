@@ -41,8 +41,6 @@ public class ProductsEventConsumer {
         productService.validateProductAddedToBasket(
                 event.getProductId(),
                 basketId,
-                event.getTotalProductQuantity(),
-                event.getQuantity(),
                 event.getPricePerUnit()
         );
     }
