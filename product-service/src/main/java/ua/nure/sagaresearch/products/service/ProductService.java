@@ -9,7 +9,7 @@ import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidate
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketPriceHasChangedEvent;
-import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,12 +61,12 @@ public class ProductService {
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));
     }
 
-    public void updateProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
+    public void reserveProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
         Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
         productsFromOrder.forEach(product -> product.decreaseQuantity(productEntries.get(product.getId()).getQuantity()));
         productRepository.saveAll(productsFromOrder);
 
-        ProductQuantityUpdatedEvent event = new ProductQuantityUpdatedEvent(orderId);
+        ProductQuantityReservedEvent event = new ProductQuantityReservedEvent(orderId);
         log(logger, "{} Updated products quantity to approve the order {}, publishing {}",
                 CONFIRM_PAYMENT_PREFIX, orderId, event.getClass().getSimpleName());
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));

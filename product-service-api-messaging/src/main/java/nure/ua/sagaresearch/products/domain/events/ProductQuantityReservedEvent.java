@@ -5,8 +5,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class ProductQuantityUpdatedEvent extends AbstractProductOrderEvent {
-    public ProductQuantityUpdatedEvent(Long orderId) {
+public class ProductQuantityReservedEvent extends AbstractProductOrderEvent {
+    public ProductQuantityReservedEvent(Long orderId) {
         super(orderId);
     }
 }

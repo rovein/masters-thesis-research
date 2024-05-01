@@ -7,7 +7,8 @@ import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
-import nure.ua.sagaresearch.products.domain.events.ProductQuantityUpdatedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityRestoredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class OrderServiceEventConsumer {
                 .forAggregateType("ua.nure.sagaresearch.baskets.domain.Basket")
                     .onEvent(BasketCheckedOutEvent.class, this::handleBasketCheckedOutEvent)
                 .andForAggregateType("ua.nure.sagaresearch.products.domain.Product")
-                    .onEvent(ProductQuantityUpdatedEvent.class, this::handleProductQuantityUpdatedEvent)
+                    .onEvent(ProductQuantityReservedEvent.class, this::handleProductQuantityReservedEvent)
                 .build();
     }
 
@@ -39,7 +40,7 @@ public class OrderServiceEventConsumer {
         orderService.placeOrder(event.getOrderId(), basketId, event.getTotalPrice(), event.getProductEntries());
     }
 
-    private void handleProductQuantityUpdatedEvent(DomainEventEnvelope<ProductQuantityUpdatedEvent> domainEventEnvelope) {
+    private void handleProductQuantityReservedEvent(DomainEventEnvelope<ProductQuantityReservedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
         var orderId = event.getOrderId();
         var productIds = Arrays.toString(domainEventEnvelope.getAggregateId().split(","));
