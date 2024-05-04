@@ -1,13 +1,11 @@
-package ua.nure.sagaresearch.orders.webapi;
+package ua.nure.sagaresearch.orders.domain.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-public class CreateOrderRequest {
+@AllArgsConstructor
+public class CreateOrderCommand implements OrderCommand {
     private String basketId;
     private String shippingType;
     private String paymentType;

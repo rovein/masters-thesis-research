@@ -43,7 +43,7 @@ public class OrderController {
                 createOrderRequest.getShippingType(),
                 createOrderRequest.getPaymentType(),
                 createOrderRequest.getShippingAddress()));
-        return new CreateOrderResponse(order.getId());
+        return new CreateOrderResponse(String.valueOf(order.getId()));
     }
 
     @GetMapping(value = "/orders/{orderId}")
@@ -73,7 +73,7 @@ public class OrderController {
 
     private ResponseEntity<GetOrderResponse> makeSuccessfulResponse(Order order) {
         return new ResponseEntity<>(new GetOrderResponse(
-                order.getId(),
+                String.valueOf(order.getId()),
                 order.getState(),
                 order.getOrderDetails().getBasketId(),
                 order.getTotalPrice(),

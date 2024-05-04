@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class CreateOrderResponse {
-  private Long orderId;
+  private String orderId;
 }

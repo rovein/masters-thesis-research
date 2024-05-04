@@ -52,7 +52,7 @@ public class OrderConfiguration {
                 orderRepository,
                 order -> {
                     DomainEvent domainEvent = new OrderSnapshotEvent(order.getId(),
-                            order.getOrderDetails().getBasketId(),
+                            Long.valueOf(order.getOrderDetails().getBasketId()),
                             order.getTotalPrice(),
                             order.getState());
                     return new DomainEventWithEntityId(order.getId(), domainEvent);

@@ -11,7 +11,7 @@ import ua.nure.sagaresearch.baskets.domain.event.BasketCommand;
 public class BasketServiceSourcingConfiguration {
 
     @Bean
-    public AggregateRepository<Basket, BasketCommand> customerRepository(EventuateAggregateStore eventStore) {
+    public AggregateRepository<Basket, BasketCommand> sourcingCustomerRepository(EventuateAggregateStore eventStore) {
         return new AggregateRepository<>(Basket.class, eventStore);
     }
 

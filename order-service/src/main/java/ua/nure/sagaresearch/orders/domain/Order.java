@@ -67,7 +67,7 @@ public class Order {
 
     public static ResultWithEvents<Order> createOrder(OrderDetails orderDetails) {
         Order order = new Order(orderDetails);
-        OrderPlacementRequestedEvent orderPlacementRequestedEvent = new OrderPlacementRequestedEvent(orderDetails.getBasketId());
+        OrderPlacementRequestedEvent orderPlacementRequestedEvent = new OrderPlacementRequestedEvent(Long.valueOf(orderDetails.getBasketId()));
         return new ResultWithEvents<>(order, singletonList(orderPlacementRequestedEvent));
     }
 

@@ -11,7 +11,7 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @Getter
 public class OrderDetails {
-    private Long basketId;
+    private String basketId;
     private String shippingType;
     private String paymentType;
     private String shippingAddress;

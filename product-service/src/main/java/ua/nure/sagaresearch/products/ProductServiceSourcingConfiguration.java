@@ -11,7 +11,7 @@ import ua.nure.sagaresearch.products.domain.event.ProductCommand;
 public class ProductServiceSourcingConfiguration {
 
     @Bean
-    public AggregateRepository<Product, ProductCommand> customerRepository(EventuateAggregateStore eventStore) {
+    public AggregateRepository<Product, ProductCommand> sourcingProductRepository(EventuateAggregateStore eventStore) {
         return new AggregateRepository<>(Product.class, eventStore);
     }
 }
