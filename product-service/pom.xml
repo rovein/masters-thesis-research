@@ -153,7 +153,13 @@
         </dependency>
         <dependency>
             <groupId>io.eventuate.local.java</groupId>
-            <artifactId>eventuate-local-java-spring-jdbc</artifactId>
+            <artifactId>eventuate-local-java-spring-jdbc-starter</artifactId>
+            <version>0.41.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>io.eventuate.local.java</groupId>
+            <artifactId>eventuate-client-java-spring-jdbc</artifactId>
+            <version>0.41.0.RELEASE</version>
         </dependency>
     </dependencies>
 
