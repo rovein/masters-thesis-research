@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class BasketDtoResponse {
-    private Long basketId;
+    private String basketId;
     private Long totalQuantity;
     private Money totalPrice;
     private List<ProductBasketEntryDto> productBasketEntries;

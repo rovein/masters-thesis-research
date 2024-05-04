@@ -58,7 +58,7 @@ public class BasketController {
 
     private BasketDtoResponse convertToBasketDtoResponse(Basket basket) {
         return new BasketDtoResponse(
-                basket.getId(),
+                String.valueOf(basket.getId()),
                 basket.getTotalQuantity(),
                 basket.getTotalPrice(),
                 basket.getProductEntries().values().stream()

@@ -8,7 +8,6 @@ import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
-import nure.ua.sagaresearch.products.domain.events.ProductQuantityRestoredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
