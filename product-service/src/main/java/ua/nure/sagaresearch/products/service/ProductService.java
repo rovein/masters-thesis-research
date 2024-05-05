@@ -7,8 +7,8 @@ import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidationFailedEvent;
-import nure.ua.sagaresearch.products.domain.events.ProductEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductBasketPriceHasChangedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,11 @@ public class ProductService {
         this.domainEventPublisher = domainEventPublisher;
     }
 
-    public Product findById(Long productId) {
+    public Product findById(String productId) {
         return productRepository.findById(productId).orElseThrow();
     }
 
-    public void validateProductAddedToBasket(Long productId, Long basketId, Money pricePerUnit) {
+    public void validateProductAddedToBasket(String productId, Long basketId, Money pricePerUnit) {
         productRepository.findById(productId)
                 .map(product -> {
                     Money actualProductPrice = product.getProductPrice();
@@ -55,13 +55,13 @@ public class ProductService {
                         () -> publishProductAddedToBasketValidationResult(new ProductBasketAdditionValidationFailedEvent(basketId), productId));
     }
 
-    private void publishProductAddedToBasketValidationResult(ProductEvent event, Long productId) {
+    private void publishProductAddedToBasketValidationResult(ProductEvent event, String productId) {
         log(logger, "{} Finished validation, publishing {} for productId {}",
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId);
         domainEventPublisher.publish(Product.class, productId, Collections.singletonList(event));
     }
 
-    public void reserveProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
+    public void reserveProductsQuantityForOrder(long orderId, Map<String, ProductOrderEntry> productEntries) {
         Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
         productsFromOrder.forEach(product -> product.decreaseQuantity(productEntries.get(product.getId()).getQuantity()));
         productRepository.saveAll(productsFromOrder);
@@ -72,7 +72,7 @@ public class ProductService {
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 
-    private static String joinProductIds(Map<Long, ProductOrderEntry> productEntries) {
+    private static String joinProductIds(Map<String, ProductOrderEntry> productEntries) {
         return productEntries.keySet().stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));

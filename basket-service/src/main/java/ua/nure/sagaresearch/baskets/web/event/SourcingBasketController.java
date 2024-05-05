@@ -1,18 +1,19 @@
 package ua.nure.sagaresearch.baskets.web.event;
 
-import io.eventuate.EntityNotFoundException;
-import io.eventuate.EntityWithIdAndVersion;
-import io.eventuate.EntityWithMetadata;
+import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
+import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.nure.sagaresearch.baskets.domain.event.Basket;
 import ua.nure.sagaresearch.baskets.service.event.SourcingBasketService;
+import ua.nure.sagaresearch.baskets.webapi.AddProductToBasketRequest;
 import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;
 
@@ -25,19 +26,23 @@ public class SourcingBasketController {
 
     @PostMapping(value = "/baskets")
     public String createBasket() {
-        EntityWithIdAndVersion<Basket> entity = sourcingBasketService.createBasket();
-        return entity.getEntityId();
+        return sourcingBasketService.createBasket().getEntityId();
     }
 
     @GetMapping(value = "/baskets/{basketId}")
     public ResponseEntity<BasketDtoResponse> getBasket(@PathVariable String basketId) {
-        EntityWithMetadata<Basket> basketWithMetadata;
-        try {
-            basketWithMetadata = sourcingBasketService.findById(basketId);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(convertToBasketDtoResponse(basketId, basketWithMetadata.getEntity()), HttpStatus.OK);
+        return supplyAndConvertToResponseEntity(() -> toEntityWithIdAndVersion(sourcingBasketService.findById(basketId)), this::convertToBasketDtoResponse);
+    }
+
+    @PostMapping(value = "/baskets/{basketId}/products")
+    public ResponseEntity<BasketDtoResponse> addProductToBasket(@PathVariable String basketId,
+                                                                @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
+        return supplyAndConvertToResponseEntity(() -> sourcingBasketService.addProductToBasket(
+                basketId,
+                addProductToBasketRequest.getProductId(),
+                addProductToBasketRequest.getQuantity(),
+                addProductToBasketRequest.getPricePerUnit()
+        ), this::convertToBasketDtoResponse);
     }
 
     private BasketDtoResponse convertToBasketDtoResponse(String basketId, Basket basket) {

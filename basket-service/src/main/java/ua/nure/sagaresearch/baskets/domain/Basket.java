@@ -23,7 +23,7 @@ import java.util.Map;
 @Access(AccessType.FIELD)
 @Getter
 @Setter
-public class Basket {
+public class Basket implements BaseBasket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
