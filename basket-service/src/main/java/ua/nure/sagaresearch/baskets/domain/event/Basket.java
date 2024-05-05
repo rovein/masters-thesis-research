@@ -21,9 +21,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     private Money totalPrice;
 
-    private Map<Long, ProductBasketEntry> productEntries;
-
-    private Long userId;
+    private Map<String, ProductBasketEntry> productEntries;
 
     public List<Event> process(CreateBasketCommand cmd) {
         return EventUtil.events(new SourcingBasketCreatedEvent());

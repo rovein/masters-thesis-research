@@ -1,6 +1,5 @@
 package ua.nure.sagaresearch.orders.domain;
 
-
 import static java.util.Collections.singletonList;
 
 import io.eventuate.tram.events.publisher.ResultWithEvents;
@@ -50,7 +49,7 @@ public class Order {
     private Money totalPrice;
 
     @ElementCollection
-    private Map<Long, ProductOrderEntry> productEntries;
+    private Map<String, ProductOrderEntry> productEntries;
 
     private LocalDate creationDate;
 

@@ -53,7 +53,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void placeOrder(Long orderId, Long basketId, Money totalPrice, Map<Long, ProductBasketEntry> productEntries) {
+    public void placeOrder(Long orderId, Long basketId, Money totalPrice, Map<String, ProductBasketEntry> productEntries) {
         Order order = getOrder(orderId);
         order.setTotalPrice(totalPrice);
         order.setProductEntries(convertToProductOrderEntries(productEntries));
@@ -115,7 +115,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("order with id %s not found", orderId)));
     }
 
-    private Map<Long, ProductOrderEntry> convertToProductOrderEntries(Map<Long, ProductBasketEntry> productEntries) {
+    private Map<String, ProductOrderEntry> convertToProductOrderEntries(Map<String, ProductBasketEntry> productEntries) {
         return productEntries.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                     ProductBasketEntry productEntry = entry.getValue();

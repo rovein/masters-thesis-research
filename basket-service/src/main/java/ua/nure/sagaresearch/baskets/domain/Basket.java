@@ -35,7 +35,7 @@ public class Basket {
     private Money totalPrice;
 
     @ElementCollection
-    private Map<Long, ProductBasketEntry> productEntries;
+    private Map<String, ProductBasketEntry> productEntries;
 
     private Long creationTime;
 

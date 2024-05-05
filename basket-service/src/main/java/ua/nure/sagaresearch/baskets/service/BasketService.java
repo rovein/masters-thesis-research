@@ -1,5 +1,7 @@
 package ua.nure.sagaresearch.baskets.service;
 
+import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.addProductEntryToBasket;
+import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.resetTotalPriceAndQuantity;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -43,43 +45,30 @@ public class BasketService {
     }
 
     @Transactional
-    public Basket addProductToBasket(Long basketId, Long productId, Long quantity, Money pricePerUnit) {
+    public Basket addProductToBasket(Long basketId, String productId, Long quantity, Money pricePerUnit) {
         log(logger, "{} Adding product {} for basket {}",
                 ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId);
 
         Basket basket = basketRepository.findById(basketId).orElseThrow();
 
-        Map<Long, ProductBasketEntry> productEntries = basket.getProductEntries();
-        productEntries.compute(productId, (k, oldEntry) -> {
-            if (oldEntry == null) {
-                ProductBasketEntry newEntry = new ProductBasketEntry(productId, quantity, pricePerUnit);
-                newEntry.setPrice(pricePerUnit.multiply(quantity));
-                return newEntry;
-            }
-            oldEntry.increaseQuantity(quantity);
-            oldEntry.setPrice(pricePerUnit.multiply(oldEntry.getQuantity()));
-            return new ProductBasketEntry(productId, oldEntry.getQuantity(), oldEntry.getPrice());
-        });
+        addProductEntryToBasket(basket, productId, quantity, pricePerUnit);
+        publishProductAddedToBasketEvent(basketId, productId, pricePerUnit);
 
-        resetTotalPriceAndQuantity(basket);
-
-        var totalProductQuantity = productEntries.get(productId).getQuantity();
-        publishProductAddedToBasketEvent(productId, totalProductQuantity, quantity, pricePerUnit, basket);
         return basket;
     }
 
     @Transactional
-    public void removeProductEntry(Long basketId, Long productId) {
+    public void removeProductEntry(Long basketId, String productId) {
         basketRepository.findById(basketId)
                 .ifPresent(basket -> {
-                    Map<Long, ProductBasketEntry> productEntries = basket.getProductEntries();
+                    Map<String, ProductBasketEntry> productEntries = basket.getProductEntries();
                     productEntries.remove(productId);
                     resetTotalPriceAndQuantity(basket);
                 });
     }
 
     @Transactional
-    public void actualizeProductEntryPrice(Long basketId, Long productId, Money actualPricePerUnit) {
+    public void actualizeProductEntryPrice(Long basketId, String productId, Money actualPricePerUnit) {
         basketRepository.findById(basketId)
                 .ifPresent(basket -> {
                     basket.getProductEntries().computeIfPresent(productId, (key, value) -> {
@@ -113,26 +102,12 @@ public class BasketService {
                 PLACE_ORDER_PREFIX, basketId, orderId);
     }
 
-    private void publishProductAddedToBasketEvent(Long productId, Long totalQuantity, Long quantity, Money pricePerUnit, Basket basket) {
-        ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, totalQuantity, quantity, pricePerUnit);
+    private void publishProductAddedToBasketEvent(Long basketId, String productId, Money pricePerUnit) {
+        ProductAddedToBasketEvent event = new ProductAddedToBasketEvent(productId, pricePerUnit);
 
         log(logger, "{} Product {} added to basket {} successfully, publishing {}",
-                ADD_PRODUCT_TO_BASKET_PREFIX, productId, basket.getId(), event.getClass().getSimpleName());
+                ADD_PRODUCT_TO_BASKET_PREFIX, productId, basketId, event.getClass().getSimpleName());
 
-        domainEventPublisher.publish(Basket.class, basket.getId(), Collections.singletonList(event));
-    }
-
-    private static void resetTotalPriceAndQuantity(Basket basket) {
-        Map<Long, ProductBasketEntry> productEntries = basket.getProductEntries();
-        basket.setTotalPrice(calculateTotalPrice(productEntries));
-        basket.setTotalQuantity(calculateTotalQuantity(productEntries));
-    }
-
-    private static long calculateTotalQuantity(Map<Long, ProductBasketEntry> productEntries) {
-        return productEntries.values().stream().mapToLong(ProductBasketEntry::getQuantity).sum();
-    }
-
-    private static Money calculateTotalPrice(Map<Long, ProductBasketEntry> productEntries) {
-        return productEntries.values().stream().map(ProductBasketEntry::getPrice).reduce(Money.ZERO, Money::add);
+        domainEventPublisher.publish(Basket.class, basketId, Collections.singletonList(event));
     }
 }

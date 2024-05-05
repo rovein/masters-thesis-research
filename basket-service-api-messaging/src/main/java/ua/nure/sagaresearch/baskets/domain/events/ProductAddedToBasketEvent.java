@@ -7,14 +7,10 @@ import ua.nure.sagaresearch.common.domain.Money;
 @NoArgsConstructor
 @Getter
 public class ProductAddedToBasketEvent extends AbstractBasketProductEvent {
-    private Long totalProductQuantity;
-    private Long quantity;
     private Money pricePerUnit;
 
-    public ProductAddedToBasketEvent(Long productId, Long totalProductQuantity, Long quantity, Money pricePerUnit) {
+    public ProductAddedToBasketEvent(String productId, Money pricePerUnit) {
         super(productId);
-        this.totalProductQuantity = totalProductQuantity;
-        this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
     }
 }

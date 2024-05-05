@@ -9,9 +9,9 @@ import java.util.Map;
 @Getter
 public class OrderPaymentConfirmedEvent implements OrderEvent {
 
-    private Map<Long, ProductOrderEntry> productEntries;
+    private Map<String, ProductOrderEntry> productEntries;
 
-    public OrderPaymentConfirmedEvent(Map<Long, ProductOrderEntry> productEntries) {
+    public OrderPaymentConfirmedEvent(Map<String, ProductOrderEntry> productEntries) {
         this.productEntries = productEntries;
     }
 }

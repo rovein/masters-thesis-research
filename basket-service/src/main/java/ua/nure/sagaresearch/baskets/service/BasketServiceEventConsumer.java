@@ -47,7 +47,7 @@ public class BasketServiceEventConsumer {
 
     private void handleProductBasketPriceHasChangedEvent(DomainEventEnvelope<ProductBasketPriceHasChangedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
-        Long productId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        String productId = domainEventEnvelope.getAggregateId();
         Long basketId = event.getBasketId();
         Money actualPricePerUnit = event.getActualPricePerUnit();
 
@@ -59,7 +59,7 @@ public class BasketServiceEventConsumer {
 
     public void handleProductBasketAdditionValidationFailedEvent(DomainEventEnvelope<ProductBasketAdditionValidationFailedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
-        Long productId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        String productId = domainEventEnvelope.getAggregateId();
         Long basketId = event.getBasketId();
 
         log(logger, "{} Received {}, performing compensation actions for productId {} and basketId {}",
