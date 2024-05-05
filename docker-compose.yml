@@ -12,7 +12,7 @@ services:
       - "8081:8081"
       - "5005:5005"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/order-service.log:/logs/order-service.log
+      - ./logs/order-service.log:/logs/order-service.log
     depends_on:
       - mysql
       - kafka
@@ -44,7 +44,7 @@ services:
       - "8082:8082"
       - "5006:5006"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/basket-service.log:/logs/basket-service.log
+      - ./logs/basket-service.log:/logs/basket-service.log
     depends_on:
       - mysql
       - kafka
@@ -76,12 +76,13 @@ services:
       - "8083:8083"
       - "5007:5007"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/product-service.log:/logs/product-service.log
+      - ./logs/product-service.log:/logs/product-service.log
     depends_on:
       - mysql
       - kafka
       - zookeeper
       - cdc-service
+    restart: always
     environment:
       TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
@@ -124,6 +125,8 @@ services:
     image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
     ports:
       - 3306:3306
+    volumes:
+      - ./data/database:/var/lib/mysql
     environment:
       - EVENTUATE_COMMON_VERSION=0.18.0.RELEASE
       - MYSQL_ROOT_PASSWORD=rootpassword
@@ -178,10 +181,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ${PROJECT_ABSOLUTE_PATH}/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ${PROJECT_ABSOLUTE_PATH}:/usr/share/logstash/config
-      - ${PROJECT_ABSOLUTE_PATH}/logs:/usr/share/logstash/logs
-      - ${PROJECT_ABSOLUTE_PATH}/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./:/usr/share/logstash/config
+      - ./logs:/usr/share/logstash/logs
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     command: [ "-f", "/usr/share/logstash/config/logstash.conf" ]
     depends_on:
       - elasticsearch

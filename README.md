@@ -16,7 +16,7 @@ To get the project up and running on your local machine, follow these steps:
 1. Create an `.env` file in the root directory of your project. Copy the contents from `./.env.sample` and fill in your specific values.
 2. Make sure Docker is installed on your local machine.
 3. Build the microservices using the `./rebuild-and-run.sh` script. For subsequent runs without changes, simply execute `./run.sh`.
-4. Access the Swagger UI to interact with the APIs at `http://localhost:${port}/swagger-ui/index.html` (replace `${port}` with the actual port number found in the `application.properties` of the respective microservice).
+4. Access the Swagger UI to interact with the APIs at `http://localhost:${port}/swagger-ui/index.html` (replace `${port}` (by default `server.port=8081`) with the actual port number found in the `application.properties` of the respective microservice).
 5. View logs of the services in Kibana at <http://localhost:5601/app/discover>
 
     **Note**: for the first Kibana access you need to create an index pattern:
