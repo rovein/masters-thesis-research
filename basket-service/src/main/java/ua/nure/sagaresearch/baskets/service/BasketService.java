@@ -2,6 +2,7 @@ package ua.nure.sagaresearch.baskets.service;
 
 import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.addProductEntryToBasket;
 import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.resetTotalPriceAndQuantity;
+import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.updateProductEntryPrice;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -70,14 +71,7 @@ public class BasketService {
     @Transactional
     public void actualizeProductEntryPrice(Long basketId, String productId, Money actualPricePerUnit) {
         basketRepository.findById(basketId)
-                .ifPresent(basket -> {
-                    basket.getProductEntries().computeIfPresent(productId, (key, value) -> {
-                        Long quantity = value.getQuantity();
-                        value.setPrice(actualPricePerUnit.multiply(quantity));
-                        return value;
-                    });
-                    resetTotalPriceAndQuantity(basket);
-                });
+                .ifPresent(basket -> updateProductEntryPrice(basket, productId, actualPricePerUnit));
     }
 
     @Transactional

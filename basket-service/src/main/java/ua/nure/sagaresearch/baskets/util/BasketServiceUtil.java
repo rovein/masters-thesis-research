@@ -20,6 +20,15 @@ public final class BasketServiceUtil {
         basket.setTotalQuantity(calculateTotalQuantity(productEntries));
     }
 
+    public static void updateProductEntryPrice(BaseBasket basket, String productId, Money actualPricePerUnit) {
+        basket.getProductEntries().computeIfPresent(productId, (key, value) -> {
+            Long quantity = value.getQuantity();
+            value.setPrice(actualPricePerUnit.multiply(quantity));
+            return value;
+        });
+        resetTotalPriceAndQuantity(basket);
+    }
+
     private static ProductBasketEntry createNewOrUpdateProductEntry(ProductBasketEntry oldEntry, String productId, Long quantity, Money pricePerUnit) {
         if (oldEntry == null) {
             ProductBasketEntry newEntry = new ProductBasketEntry(productId, quantity, pricePerUnit);
