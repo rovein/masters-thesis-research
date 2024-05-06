@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.orders.web;
+package ua.nure.sagaresearch.orders.config;
 
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;

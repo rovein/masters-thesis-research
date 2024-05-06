@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.products;
+package ua.nure.sagaresearch.products.config;
 
 import io.eventuate.tram.events.subscriber.DomainEventDispatcher;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcherFactory;

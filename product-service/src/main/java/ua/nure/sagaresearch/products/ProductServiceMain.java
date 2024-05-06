@@ -5,7 +5,9 @@ import io.eventuate.local.java.spring.javaclient.driver.EventuateDriverConfigura
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
-import ua.nure.sagaresearch.products.web.ProductsWebConfiguration;
+import ua.nure.sagaresearch.products.config.ProductServiceConfiguration;
+import ua.nure.sagaresearch.products.config.ProductServiceSourcingConfiguration;
+import ua.nure.sagaresearch.products.config.ProductsWebConfiguration;
 
 @SpringBootApplication
 @EnableEventHandlers

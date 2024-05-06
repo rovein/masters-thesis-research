@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets;
+package ua.nure.sagaresearch.baskets.config;
 
 import io.eventuate.sync.AggregateRepository;
 import io.eventuate.sync.EventuateAggregateStore;

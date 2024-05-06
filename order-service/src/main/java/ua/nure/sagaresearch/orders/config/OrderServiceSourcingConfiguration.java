@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.orders;
+package ua.nure.sagaresearch.orders.config;
 
 import io.eventuate.sync.AggregateRepository;
 import io.eventuate.sync.EventuateAggregateStore;

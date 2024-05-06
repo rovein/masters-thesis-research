@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.web;
+package ua.nure.sagaresearch.baskets.config;
 
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
