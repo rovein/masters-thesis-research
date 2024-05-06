@@ -3,6 +3,7 @@ package ua.nure.sagaresearch.baskets.domain.events;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 
 import java.util.Map;
 

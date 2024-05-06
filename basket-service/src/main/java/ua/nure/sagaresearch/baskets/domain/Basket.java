@@ -2,7 +2,8 @@ package ua.nure.sagaresearch.baskets.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.BaseBasket;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import javax.persistence.Access;

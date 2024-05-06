@@ -11,7 +11,7 @@ import io.eventuate.tram.events.publisher.ResultWithEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;

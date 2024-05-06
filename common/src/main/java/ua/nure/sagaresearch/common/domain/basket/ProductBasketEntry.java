@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.domain.events;
+package ua.nure.sagaresearch.common.domain.basket;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

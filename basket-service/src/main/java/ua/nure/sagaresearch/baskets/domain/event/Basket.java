@@ -1,7 +1,7 @@
 package ua.nure.sagaresearch.baskets.domain.event;
 
-import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.addProductEntryToBasket;
-import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.updateProductEntryPrice;
+import static ua.nure.sagaresearch.common.util.BasketServiceUtil.addProductEntryToBasket;
+import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEntryPrice;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
 
@@ -12,8 +12,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ua.nure.sagaresearch.baskets.domain.BaseBasket;
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.BaseBasket;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketCreatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductPriceUpdatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductValidationHandledEvent;

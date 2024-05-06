@@ -1,8 +1,8 @@
-package ua.nure.sagaresearch.baskets.util;
+package ua.nure.sagaresearch.common.util;
 
-import ua.nure.sagaresearch.baskets.domain.BaseBasket;
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.BaseBasket;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 
 import java.util.Map;
 

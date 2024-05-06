@@ -1,6 +1,5 @@
-package ua.nure.sagaresearch.baskets.domain;
+package ua.nure.sagaresearch.common.domain.basket;
 
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import java.util.Map;

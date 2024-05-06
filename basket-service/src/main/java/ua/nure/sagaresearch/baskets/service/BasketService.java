@@ -1,8 +1,8 @@
 package ua.nure.sagaresearch.baskets.service;
 
-import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.addProductEntryToBasket;
-import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.resetTotalPriceAndQuantity;
-import static ua.nure.sagaresearch.baskets.util.BasketServiceUtil.updateProductEntryPrice;
+import static ua.nure.sagaresearch.common.util.BasketServiceUtil.addProductEntryToBasket;
+import static ua.nure.sagaresearch.common.util.BasketServiceUtil.resetTotalPriceAndQuantity;
+import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEntryPrice;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -16,7 +16,7 @@ import ua.nure.sagaresearch.baskets.domain.BasketIsEmptyException;
 import ua.nure.sagaresearch.baskets.domain.BasketRepository;
 import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
-import ua.nure.sagaresearch.baskets.domain.events.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import javax.transaction.Transactional;
