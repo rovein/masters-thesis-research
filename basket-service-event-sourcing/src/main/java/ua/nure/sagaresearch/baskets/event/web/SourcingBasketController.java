@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.web.event;
+package ua.nure.sagaresearch.baskets.event.web;
 
 import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.nure.sagaresearch.baskets.domain.event.Basket;
-import ua.nure.sagaresearch.baskets.service.event.SourcingBasketService;
+import ua.nure.sagaresearch.baskets.event.domain.Basket;
+import ua.nure.sagaresearch.baskets.event.service.SourcingBasketService;
 import ua.nure.sagaresearch.baskets.webapi.AddProductToBasketRequest;
 import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;

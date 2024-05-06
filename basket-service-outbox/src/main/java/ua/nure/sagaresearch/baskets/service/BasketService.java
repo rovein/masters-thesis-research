@@ -16,8 +16,8 @@ import ua.nure.sagaresearch.baskets.domain.BasketIsEmptyException;
 import ua.nure.sagaresearch.baskets.domain.BasketRepository;
 import ua.nure.sagaresearch.baskets.domain.events.BasketCheckedOutEvent;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
-import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 
 import javax.transaction.Transactional;
 import java.util.Collections;

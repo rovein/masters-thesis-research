@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.domain.event;
+package ua.nure.sagaresearch.baskets.event.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +8,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class AddProductToBasketCommand implements BasketCommand {
+public class UpdateBasketProductPriceCommand implements BasketCommand {
     private String productId;
-    private Long quantity;
-    private Money pricePerUnit;
+    private Money actualPricePerUnit;
 }

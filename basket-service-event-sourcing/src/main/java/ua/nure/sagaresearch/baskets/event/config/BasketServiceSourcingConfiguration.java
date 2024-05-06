@@ -1,12 +1,12 @@
-package ua.nure.sagaresearch.baskets.config;
+package ua.nure.sagaresearch.baskets.event.config;
 
 import io.eventuate.sync.AggregateRepository;
 import io.eventuate.sync.EventuateAggregateStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ua.nure.sagaresearch.baskets.domain.event.Basket;
-import ua.nure.sagaresearch.baskets.domain.event.BasketCommand;
-import ua.nure.sagaresearch.baskets.service.event.BasketWorkflow;
+import ua.nure.sagaresearch.baskets.event.domain.Basket;
+import ua.nure.sagaresearch.baskets.event.domain.BasketCommand;
+import ua.nure.sagaresearch.baskets.event.service.BasketWorkflow;
 
 @Configuration
 public class BasketServiceSourcingConfiguration {

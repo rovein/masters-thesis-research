@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.service.event;
+package ua.nure.sagaresearch.baskets.event.service;
 
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EventHandlerContext;
@@ -6,9 +6,9 @@ import io.eventuate.EventHandlerMethod;
 import io.eventuate.EventSubscriber;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBasketPriceHasChangedEvent;
-import ua.nure.sagaresearch.baskets.domain.event.Basket;
-import ua.nure.sagaresearch.baskets.domain.event.HandleProductValidationCommand;
-import ua.nure.sagaresearch.baskets.domain.event.UpdateBasketProductPriceCommand;
+import ua.nure.sagaresearch.baskets.event.domain.Basket;
+import ua.nure.sagaresearch.baskets.event.domain.HandleProductValidationCommand;
+import ua.nure.sagaresearch.baskets.event.domain.UpdateBasketProductPriceCommand;
 import ua.nure.sagaresearch.common.domain.Money;
 
 import java.util.concurrent.CompletableFuture;

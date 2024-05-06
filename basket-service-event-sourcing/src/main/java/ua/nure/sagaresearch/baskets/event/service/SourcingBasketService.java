@@ -1,14 +1,14 @@
-package ua.nure.sagaresearch.baskets.service.event;
+package ua.nure.sagaresearch.baskets.event.service;
 
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
 import io.eventuate.sync.AggregateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.nure.sagaresearch.baskets.domain.event.AddProductToBasketCommand;
-import ua.nure.sagaresearch.baskets.domain.event.Basket;
-import ua.nure.sagaresearch.baskets.domain.event.BasketCommand;
-import ua.nure.sagaresearch.baskets.domain.event.CreateBasketCommand;
+import ua.nure.sagaresearch.baskets.event.domain.AddProductToBasketCommand;
+import ua.nure.sagaresearch.baskets.event.domain.Basket;
+import ua.nure.sagaresearch.baskets.event.domain.BasketCommand;
+import ua.nure.sagaresearch.baskets.event.domain.CreateBasketCommand;
 import ua.nure.sagaresearch.common.domain.Money;
 
 @Service
@@ -29,4 +29,3 @@ public class SourcingBasketService {
         return basketRepository.update(basketId, addProductToBasketCommand);
     }
 }
-

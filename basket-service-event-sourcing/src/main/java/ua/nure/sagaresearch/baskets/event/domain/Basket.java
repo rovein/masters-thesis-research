@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.baskets.domain.event;
+package ua.nure.sagaresearch.baskets.event.domain;
 
 import static ua.nure.sagaresearch.common.util.BasketServiceUtil.addProductEntryToBasket;
 import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEntryPrice;
@@ -12,13 +12,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ua.nure.sagaresearch.common.domain.basket.BaseBasket;
-import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketCreatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductPriceUpdatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductValidationHandledEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingProductAddedToBasketEvent;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.basket.BaseBasket;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 
 import java.util.HashMap;
 import java.util.List;
