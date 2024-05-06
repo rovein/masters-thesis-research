@@ -36,7 +36,7 @@
         <module>order-service-api-web</module>
         <module>order-service-api-messaging</module>
 
-        <module>product-service</module>
+        <module>product-service-outbox</module>
         <module>product-service-api-web</module>
         <module>product-service-api-messaging</module>
     </modules>
