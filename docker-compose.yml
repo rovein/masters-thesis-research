@@ -128,6 +128,38 @@ services:
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
+  product-service-event-sourcing:
+    build:
+      context: ./product-service-event-sourcing/
+      args:
+        jarDir: ${JAR_DIR:-target}
+        serviceImageVersion: 0.1.0-SNAPSHOT
+        baseImageVersion: BUILD-15
+    image: saga-research/product-service-event-sourcing:${DOCKER_IMAGE_TAG:-latest}
+    ports:
+      - "8083:8083"
+      - "5007:5007"
+    volumes:
+      - ./logs/product-service.log:/logs/product-service.log
+    depends_on:
+      - mysql
+      - kafka
+      - zookeeper
+      - cdc-service
+    restart: always
+    environment:
+      TZ: Europe/Kiev
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      SPRING_DATASOURCE_USERNAME: mysqluser
+      SPRING_DATASOURCE_PASSWORD: mysqlpw
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      CDC_SERVICE_URL: http://cdc-service:8080
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+
   zookeeper:
     image: "eventuateio/eventuate-zookeeper:0.18.0.RELEASE"
     ports:

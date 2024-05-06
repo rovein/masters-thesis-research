@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.products.domain;
+package ua.nure.sagaresearch.common.domain.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

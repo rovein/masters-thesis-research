@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.product.ProductProperty;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;

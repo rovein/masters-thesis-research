@@ -6,16 +6,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import ua.nure.sagaresearch.products.config.ProductServiceConfiguration;
-import ua.nure.sagaresearch.products.config.ProductServiceSourcingConfiguration;
 import ua.nure.sagaresearch.products.config.ProductsWebConfiguration;
 
 @SpringBootApplication
 @EnableEventHandlers
-@Import({ProductsWebConfiguration.class, ProductServiceConfiguration.class, ProductServiceSourcingConfiguration.class,
-        EventuateDriverConfiguration.class})
-public class ProductServiceMain {
+@Import({ProductsWebConfiguration.class, ProductServiceConfiguration.class, EventuateDriverConfiguration.class})
+public class OutboxProductServiceMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProductServiceMain.class, args);
+        SpringApplication.run(OutboxProductServiceMain.class, args);
     }
 }

@@ -1,12 +1,12 @@
-package ua.nure.sagaresearch.products.config;
+package ua.nure.sagaresearch.products.event.config;
 
 import io.eventuate.sync.AggregateRepository;
 import io.eventuate.sync.EventuateAggregateStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ua.nure.sagaresearch.products.domain.event.Product;
-import ua.nure.sagaresearch.products.domain.event.ProductCommand;
-import ua.nure.sagaresearch.products.service.event.ProductWorkflow;
+import ua.nure.sagaresearch.products.event.domain.Product;
+import ua.nure.sagaresearch.products.event.domain.ProductCommand;
+import ua.nure.sagaresearch.products.event.service.ProductWorkflow;
 
 @Configuration
 public class ProductServiceSourcingConfiguration {

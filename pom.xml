@@ -37,6 +37,7 @@
         <module>order-service-api-messaging</module>
 
         <module>product-service-outbox</module>
+        <module>product-service-event-sourcing</module>
         <module>product-service-api-web</module>
         <module>product-service-api-messaging</module>
     </modules>

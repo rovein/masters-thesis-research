@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.products.service.event;
+package ua.nure.sagaresearch.products.event.service;
 
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
@@ -6,9 +6,9 @@ import io.eventuate.sync.AggregateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.nure.sagaresearch.common.domain.Money;
-import ua.nure.sagaresearch.products.domain.event.CreateProductCommand;
-import ua.nure.sagaresearch.products.domain.event.Product;
-import ua.nure.sagaresearch.products.domain.event.ProductCommand;
+import ua.nure.sagaresearch.products.event.domain.CreateProductCommand;
+import ua.nure.sagaresearch.products.event.domain.Product;
+import ua.nure.sagaresearch.products.event.domain.ProductCommand;
 
 @Service
 @RequiredArgsConstructor

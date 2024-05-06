@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.products.domain.event;
+package ua.nure.sagaresearch.products.event.domain;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
@@ -14,7 +14,7 @@ import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductCreat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.common.domain.Money;
-import ua.nure.sagaresearch.products.domain.ProductProperty;
+import ua.nure.sagaresearch.common.domain.product.ProductProperty;
 
 import javax.persistence.ElementCollection;
 import java.util.Collections;
