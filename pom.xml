@@ -27,7 +27,7 @@
     <modules>
         <module>common</module>
 
-        <module>basket-service</module>
+        <module>basket-service-outbox</module>
         <module>basket-service-api-web</module>
         <module>basket-service-api-messaging</module>
 
