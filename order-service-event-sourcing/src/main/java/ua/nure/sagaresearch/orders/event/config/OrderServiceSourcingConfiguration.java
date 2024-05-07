@@ -1,11 +1,11 @@
-package ua.nure.sagaresearch.orders.config;
+package ua.nure.sagaresearch.orders.event.config;
 
 import io.eventuate.sync.AggregateRepository;
 import io.eventuate.sync.EventuateAggregateStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ua.nure.sagaresearch.orders.domain.event.Order;
-import ua.nure.sagaresearch.orders.domain.event.OrderCommand;
+import ua.nure.sagaresearch.orders.event.domain.Order;
+import ua.nure.sagaresearch.orders.event.domain.OrderCommand;
 
 @Configuration
 public class OrderServiceSourcingConfiguration {

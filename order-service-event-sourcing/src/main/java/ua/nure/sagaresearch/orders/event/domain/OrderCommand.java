@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.orders.domain.event;
+package ua.nure.sagaresearch.orders.event.domain;
 
 import io.eventuate.Command;
 

@@ -1,13 +1,14 @@
-package ua.nure.sagaresearch.orders.service.event;
+package ua.nure.sagaresearch.orders.event.service;
 
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
 import io.eventuate.sync.AggregateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.nure.sagaresearch.orders.domain.event.CreateOrderCommand;
-import ua.nure.sagaresearch.orders.domain.event.Order;
-import ua.nure.sagaresearch.orders.domain.event.OrderCommand;
+import ua.nure.sagaresearch.orders.event.domain.CreateOrderCommand;
+import ua.nure.sagaresearch.orders.event.domain.Order;
+import ua.nure.sagaresearch.orders.event.domain.OrderCommand;
+
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package ua.nure.sagaresearch.orders.web.event;
+package ua.nure.sagaresearch.orders.event.web;
 
 import io.eventuate.EntityNotFoundException;
 import io.eventuate.EntityWithIdAndVersion;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.nure.sagaresearch.orders.domain.event.Order;
-import ua.nure.sagaresearch.orders.service.event.SourcingOrderService;
+import ua.nure.sagaresearch.orders.event.domain.Order;
+import ua.nure.sagaresearch.orders.event.service.SourcingOrderService;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderRequest;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
 import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;

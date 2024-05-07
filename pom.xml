@@ -33,6 +33,7 @@
         <module>basket-service-api-messaging</module>
 
         <module>order-service-outbox</module>
+        <module>order-service-event-sourcing</module>
         <module>order-service-api-web</module>
         <module>order-service-api-messaging</module>
 
