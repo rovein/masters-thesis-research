@@ -15,8 +15,8 @@ import ua.nure.sagaresearch.orders.config.OrderWebConfiguration;
 @EnableJpaRepositories
 @Import({OrderWebConfiguration.class, OrderConfiguration.class, OrderServiceSourcingConfiguration.class,
         EventuateDriverConfiguration.class})
-public class OrderServiceMain {
+public class OutboxOrderServiceMain {
     public static void main(String[] args) {
-        SpringApplication.run(OrderServiceMain.class, args);
+        SpringApplication.run(OutboxOrderServiceMain.class, args);
     }
 }

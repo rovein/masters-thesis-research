@@ -1,13 +1,13 @@
 version: '3'
 services:
-  order-service:
+  order-service-outbox:
     build:
-      context: ./order-service/
+      context: ./order-service-outbox/
       args:
         jarDir: ${JAR_DIR:-target}
         serviceImageVersion: 0.1.0-SNAPSHOT
         baseImageVersion: BUILD-15
-    image: saga-research/order-service:${DOCKER_IMAGE_TAG:-latest}
+    image: saga-research/order-service-outbox:${DOCKER_IMAGE_TAG:-latest}
     ports:
       - "8081:8081"
       - "5005:5005"
