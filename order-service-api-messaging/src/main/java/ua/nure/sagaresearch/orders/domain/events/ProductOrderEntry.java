@@ -15,7 +15,7 @@ import javax.persistence.Embedded;
 @Getter
 @Setter
 public class ProductOrderEntry {
-    private Long productId;
+    private String productId;
 
     private Long quantity;
 

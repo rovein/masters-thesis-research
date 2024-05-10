@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public abstract class AbstractBasketProductEvent implements BasketEvent {
-    protected Long productId;
+    protected String productId;
 }

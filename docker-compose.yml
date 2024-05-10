@@ -1,101 +1,198 @@
 version: '3'
 services:
-  order-service:
+  order-service-outbox:
     build:
-      context: ./order-service/
+      context: ./order-service-outbox/
       args:
         jarDir: ${JAR_DIR:-target}
         serviceImageVersion: 0.1.0-SNAPSHOT
         baseImageVersion: BUILD-15
-    image: saga-research/order-service:${DOCKER_IMAGE_TAG:-latest}
+    image: saga-research/order-service-outbox:${DOCKER_IMAGE_TAG:-latest}
     ports:
       - "8081:8081"
       - "5005:5005"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/order-service.log:/logs/order-service.log
+      - ./logs/order-service.log:/logs/order-service.log
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
-      - cdc-service
+      - mysql-outbox
+      - kafka-outbox
+      - zookeeper-outbox
+      - cdc-service-outbox
     restart: always
     environment:
       TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      CDC_SERVICE_URL: http://cdc-service:8080
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-outbox:29092
+      CDC_SERVICE_URL: http://cdc-service-outbox:8080
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
-  basket-service:
+  order-service-event-sourcing:
     build:
-      context: ./basket-service/
+      context: ./order-service-event-sourcing/
       args:
         jarDir: ${JAR_DIR:-target}
         serviceImageVersion: 0.1.0-SNAPSHOT
         baseImageVersion: BUILD-15
-    image: saga-research/basket-service:${DOCKER_IMAGE_TAG:-latest}
+    image: saga-research/order-service-event-sourcing:${DOCKER_IMAGE_TAG:-latest}
+    ports:
+      - "8181:8181"
+      - "5105:5105"
+    volumes:
+      - ./logs/order-service.log:/logs/order-service.log
+    depends_on:
+      - mysql-event-sourcing
+      - kafka-event-sourcing
+      - zookeeper-event-sourcing
+      - cdc-service-event-sourcing
+    restart: always
+    environment:
+      TZ: Europe/Kiev
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5105
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-event-sourcing/eventuate
+      SPRING_DATASOURCE_USERNAME: mysqluser
+      SPRING_DATASOURCE_PASSWORD: mysqlpw
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-event-sourcing:29192
+      CDC_SERVICE_URL: http://cdc-service-event-sourcing:8080
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+
+  basket-service-outbox:
+    build:
+      context: ./basket-service-outbox/
+      args:
+        jarDir: ${JAR_DIR:-target}
+        serviceImageVersion: 0.1.0-SNAPSHOT
+        baseImageVersion: BUILD-15
+    image: saga-research/basket-service-outbox:${DOCKER_IMAGE_TAG:-latest}
     ports:
       - "8082:8082"
       - "5006:5006"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/basket-service.log:/logs/basket-service.log
+      - ./logs/basket-service.log:/logs/basket-service.log
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
-      - cdc-service
+      - mysql-outbox
+      - kafka-outbox
+      - zookeeper-outbox
+      - cdc-service-outbox
     restart: always
     environment:
       TZ: Europe/Kiev
       JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      CDC_SERVICE_URL: http://cdc-service:8080
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-outbox:29092
+      CDC_SERVICE_URL: http://cdc-service-event-sourcing:8080
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
-  product-service:
+  basket-service-event-sourcing:
     build:
-      context: ./product-service/
+      context: ./basket-service-event-sourcing/
       args:
         jarDir: ${JAR_DIR:-target}
         serviceImageVersion: 0.1.0-SNAPSHOT
         baseImageVersion: BUILD-15
-    image: saga-research/product-service:${DOCKER_IMAGE_TAG:-latest}
+    image: saga-research/basket-service-event-sourcing:${DOCKER_IMAGE_TAG:-latest}
     ports:
-      - "8083:8083"
-      - "5007:5007"
+      - "8182:8182"
+      - "5106:5106"
     volumes:
-      - /Users/roman/Study/masters-thesis-research/logs/product-service.log:/logs/product-service.log
+      - ./logs/basket-service.log:/logs/basket-service.log
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
-      - cdc-service
+      - mysql-event-sourcing
+      - kafka-event-sourcing
+      - zookeeper-event-sourcing
+      - cdc-service-event-sourcing
+    restart: always
     environment:
       TZ: Europe/Kiev
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5106
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-event-sourcing/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      CDC_SERVICE_URL: http://cdc-service:8080
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-event-sourcing:29192
+      CDC_SERVICE_URL: http://cdc-service-event-sourcing:8080
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 
-  zookeeper:
+  product-service-outbox:
+    build:
+      context: ./product-service-outbox/
+      args:
+        jarDir: ${JAR_DIR:-target}
+        serviceImageVersion: 0.1.0-SNAPSHOT
+        baseImageVersion: BUILD-15
+    image: saga-research/product-service-outbox:${DOCKER_IMAGE_TAG:-latest}
+    ports:
+      - "8083:8083"
+      - "5007:5007"
+    volumes:
+      - ./logs/product-service.log:/logs/product-service.log
+    depends_on:
+      - mysql-outbox
+      - kafka-outbox
+      - zookeeper-outbox
+      - cdc-service-outbox
+    restart: always
+    environment:
+      TZ: Europe/Kiev
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
+      SPRING_DATASOURCE_USERNAME: mysqluser
+      SPRING_DATASOURCE_PASSWORD: mysqlpw
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-outbox:29092
+      CDC_SERVICE_URL: http://cdc-service-outbox:8080
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+
+  product-service-event-sourcing:
+    build:
+      context: ./product-service-event-sourcing/
+      args:
+        jarDir: ${JAR_DIR:-target}
+        serviceImageVersion: 0.1.0-SNAPSHOT
+        baseImageVersion: BUILD-15
+    image: saga-research/product-service-event-sourcing:${DOCKER_IMAGE_TAG:-latest}
+    ports:
+      - "8183:8183"
+      - "5107:5107"
+    volumes:
+      - ./logs/product-service.log:/logs/product-service.log
+    depends_on:
+      - mysql-event-sourcing
+      - kafka-event-sourcing
+      - zookeeper-event-sourcing
+      - cdc-service-event-sourcing
+    restart: always
+    environment:
+      TZ: Europe/Kiev
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5107
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-event-sourcing/eventuate
+      SPRING_DATASOURCE_USERNAME: mysqluser
+      SPRING_DATASOURCE_PASSWORD: mysqlpw
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-event-sourcing:29192
+      CDC_SERVICE_URL: http://cdc-service-event-sourcing:8080
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+
+  zookeeper-outbox:
     image: "eventuateio/eventuate-zookeeper:0.18.0.RELEASE"
     ports:
       - 2181:2181
@@ -104,47 +201,86 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       KAFKA_HEAP_OPTS: -Xmx64m
 
-  kafka:
+  zookeeper-event-sourcing:
+    image: "eventuateio/eventuate-zookeeper:0.18.0.RELEASE"
+    ports:
+      - 2281:2181
+    environment:
+      EVENTUATE_COMMON_VERSION: 0.18.0.RELEASE
+      ZOOKEEPER_CLIENT_PORT: 2281
+      KAFKA_HEAP_OPTS: -Xmx64m
+
+  kafka-outbox:
     image: "eventuateio/eventuate-kafka:0.18.0.RELEASE"
     ports:
       - 9092:9092
       - 29092:29092
     depends_on:
-      - zookeeper
+      - zookeeper-outbox
     environment:
-      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
-      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+      KAFKA_LISTENERS: LC://kafka-outbox:29092,LX://kafka-outbox:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka-outbox:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LC
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-outbox:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_HEAP_OPTS: -Xmx192m
 
-  mysql:
+  kafka-event-sourcing:
+    image: "eventuateio/eventuate-kafka:0.18.0.RELEASE"
+    ports:
+      - 9192:9192
+      - 29192:29192
+    depends_on:
+      - zookeeper-event-sourcing
+    environment:
+      KAFKA_LISTENERS: LC://kafka-event-sourcing:29192,LX://kafka-event-sourcing:9192
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka-event-sourcing:29192,LX://${DOCKER_HOST_IP:-localhost}:9192
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-event-sourcing:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: -Xmx192m
+
+  mysql-outbox:
     image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
     ports:
       - 3306:3306
+    volumes:
+      - ./data/database-outbox:/var/lib/mysql
     environment:
       - EVENTUATE_COMMON_VERSION=0.18.0.RELEASE
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_USER=mysqluser
       - MYSQL_PASSWORD=mysqlpw
 
-  cdc-service:
+  mysql-event-sourcing:
+    image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
+    ports:
+      - 3316:3306
+    volumes:
+      - ./data/database-event-sourcing:/var/lib/mysql
+    environment:
+      - EVENTUATE_COMMON_VERSION=0.18.0.RELEASE
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=mysqluser
+      - MYSQL_PASSWORD=mysqlpw
+
+  cdc-service-outbox:
     image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
     ports:
       - "8099:8080"
     depends_on:
-      - mysql
-      - kafka
-      - zookeeper
+      - mysql-outbox
+      - kafka-outbox
+      - zookeeper-outbox
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-outbox:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper-outbox:2181
       EVENTUATELOCAL_CDC_DB_USER_NAME: root
       EVENTUATELOCAL_CDC_DB_PASSWORD: rootpassword
       EVENTUATELOCAL_CDC_READER_NAME: MySqlReader
@@ -152,6 +288,31 @@ services:
       EVENTUATELOCAL_CDC_READ_OLD_DEBEZIUM_DB_OFFSET_STORAGE_TOPIC: "false"
       EVENTUATE_CDC_KAFKA_ENABLE_BATCH_PROCESSING: ${EVENTUATE_CDC_KAFKA_ENABLE_BATCH_PROCESSING:-false}
       EVENTUATE_OUTBOX_ID: 1
+      JAVA_OPTS: -Xmx64m
+
+  cdc-service-event-sourcing:
+    image: eventuateio/eventuate-cdc-service:0.16.0.RELEASE
+    ports:
+      - "8199:8080"
+    depends_on:
+      - mysql-event-sourcing
+      - kafka-event-sourcing
+      - zookeeper-event-sourcing
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-event-sourcing/eventuate
+      SPRING_DATASOURCE_USERNAME: mysqluser
+      SPRING_DATASOURCE_PASSWORD: mysqlpw
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka-event-sourcing:29192
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper-event-sourcing:2181
+      EVENTUATELOCAL_CDC_DB_USER_NAME: root
+      EVENTUATELOCAL_CDC_DB_PASSWORD: rootpassword
+      EVENTUATELOCAL_CDC_READER_NAME: MySqlReader
+      EVENTUATELOCAL_CDC_MYSQL_BINLOG_CLIENT_UNIQUE_ID: 1234567890
+      EVENTUATELOCAL_CDC_READ_OLD_DEBEZIUM_DB_OFFSET_STORAGE_TOPIC: "false"
+      EVENTUATE_CDC_KAFKA_ENABLE_BATCH_PROCESSING: ${EVENTUATE_CDC_KAFKA_ENABLE_BATCH_PROCESSING:-false}
+      EVENTUATE_OUTBOX_ID: 1
+      EVENTUATE_CDC_TYPE: "EventuateLocal"
       JAVA_OPTS: -Xmx64m
 
   zipkin:
@@ -178,10 +339,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ${PROJECT_ABSOLUTE_PATH}/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ${PROJECT_ABSOLUTE_PATH}:/usr/share/logstash/config
-      - ${PROJECT_ABSOLUTE_PATH}/logs:/usr/share/logstash/logs
-      - ${PROJECT_ABSOLUTE_PATH}/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./:/usr/share/logstash/config
+      - ./logs:/usr/share/logstash/logs
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     command: [ "-f", "/usr/share/logstash/config/logstash.conf" ]
     depends_on:
       - elasticsearch

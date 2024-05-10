@@ -9,7 +9,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 @AllArgsConstructor
 @Getter
 public class AddProductToBasketRequest {
-    private Long productId;
+    private String productId;
     private Long quantity;
     private Money pricePerUnit;
 }

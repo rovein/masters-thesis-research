@@ -14,9 +14,9 @@ import java.util.Collection;
 @AllArgsConstructor
 @Getter
 public class GetOrderResponse {
-    private Long orderId;
+    private String orderId;
     private OrderState orderState;
-    private Long basketId;
+    private String basketId;
     private Money totalPrice;
     private Collection<ProductOrderEntry> productEntries;
 }

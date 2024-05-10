@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class CreateOrderRequest {
-    private Long basketId;
+    private String basketId;
     private String shippingType;
     private String paymentType;
     private String shippingAddress;
