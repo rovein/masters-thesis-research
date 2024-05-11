@@ -1,5 +1,6 @@
 package ua.nure.sagaresearch.orders.service;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -8,6 +9,7 @@ import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
 import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityRestoredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,11 @@ public class OrderServiceEventConsumer {
     //  5.1 restore the event metadata, log it
     //  5.2 Call orderService.cancelOrder (already implemented)
     private void handleProductQuantityRestoredEvent(DomainEventEnvelope<ProductQuantityRestoredEvent> domainEventEnvelope) {
-
+        var event = domainEventEnvelope.getEvent();
+        var orderId = event.getOrderId();
+        var productIds = Arrays.toString(domainEventEnvelope.getAggregateId().split(","));
+        log(logger, "{} Received {} for order {} and product IDs: {}",
+                CANCEL_ORDER_PREFIX, event.getClass().getSimpleName(), orderId, productIds);
+        orderService.cancelOrder(orderId);
     }
 }

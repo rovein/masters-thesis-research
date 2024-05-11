@@ -57,4 +57,8 @@ public class Product {
         Preconditions.checkState(newQuantity >= 0, "New quantity is going to be " + newQuantity);
         this.productQuantity = newQuantity;
     }
+
+    public void increaseQuantity(long increaseValue) {
+        this.productQuantity = productQuantity + increaseValue;
+    }
 }

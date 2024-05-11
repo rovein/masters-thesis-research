@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.products.domain;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
@@ -60,6 +61,11 @@ public class ProductsEventConsumer {
     //  3.1 Here you are accepting the event. Retrieve event, orderId, log that you received it
     //  3.2 Call the productService.restoreProductsQuantityForOrder
     private void handleOrderCancellationRequestedEvent(DomainEventEnvelope<OrderCancellationRequestedEvent> domainEventEnvelope) {
+        OrderCancellationRequestedEvent event = domainEventEnvelope.getEvent();
+        long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        log(logger, "{} Handling {} for order {}",
+                CANCEL_ORDER_PREFIX, event.getClass().getSimpleName(), orderId);
 
+        productService.restoreProductsQuantityForOrder(orderId, event.getProductEntries());
     }
 }

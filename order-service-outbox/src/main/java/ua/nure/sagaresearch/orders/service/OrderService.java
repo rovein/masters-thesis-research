@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.orders.service;
 
 import static java.util.Collections.singletonList;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -16,6 +17,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;
 import ua.nure.sagaresearch.orders.domain.events.OrderApprovedEvent;
+import ua.nure.sagaresearch.orders.domain.events.OrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderCancelledEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderDetails;
 import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
@@ -107,7 +109,16 @@ public class OrderService {
     //  2.3 Publish the OrderCancellationRequestedEvent (it is present, you need to fill it with order.getProductEntries())
     @Transactional
     public Order requestCancellation(Long orderId) {
-        return null;
+        Order order = getOrder(orderId);
+        order.setState(OrderState.CANCELLATION_REQUESTED);
+        OrderCancellationRequestedEvent event = new OrderCancellationRequestedEvent(order.getProductEntries());
+
+        log(logger, "{} Cancellation requested the order {}, publishing the {}",
+                CANCEL_ORDER_PREFIX, orderId, event.getClass().getSimpleName());
+
+        domainEventPublisher.publish(Order.class, orderId, Collections.singletonList(event));
+
+        return order;
     }
 
     @Transactional

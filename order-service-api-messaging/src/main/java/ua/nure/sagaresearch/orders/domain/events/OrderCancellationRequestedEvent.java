@@ -9,9 +9,9 @@ import java.util.Map;
 @Getter
 public class OrderCancellationRequestedEvent implements OrderEvent {
 
-    private Map<Long, ProductOrderEntry> productEntries;
+    private Map<String, ProductOrderEntry> productEntries;
 
-    public OrderCancellationRequestedEvent(Map<Long, ProductOrderEntry> productEntries) {
+    public OrderCancellationRequestedEvent(Map<String, ProductOrderEntry> productEntries) {
         this.productEntries = productEntries;
     }
 }

@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.products.service;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
@@ -10,6 +11,7 @@ import nure.ua.sagaresearch.products.domain.events.ProductBasketAdditionValidati
 import nure.ua.sagaresearch.products.domain.events.ProductBasketPriceHasChangedEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductEvent;
 import nure.ua.sagaresearch.products.domain.events.ProductQuantityReservedEvent;
+import nure.ua.sagaresearch.products.domain.events.ProductQuantityRestoredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -72,16 +74,22 @@ public class ProductService {
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 
-    private static String joinProductIds(Map<String, ProductOrderEntry> productEntries) {
     // TODO [Cancel Order SAGA] Step 4:
     //  4.1 This method restores the product quantity for cancelled orders. It will be very similar to 'decrease..' one
     //  4.2 Find all products and increase their quantity in the warehouse.
     //  4.3 Log the results and publish the ProductQuantityRestoredEvent
-    public void restoreProductsQuantityForOrder(long orderId, Map<Long, ProductOrderEntry> productEntries) {
+    public void restoreProductsQuantityForOrder(long orderId, Map<String , ProductOrderEntry> productEntries) {
+        Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
+        productsFromOrder.forEach(product -> product.increaseQuantity(productEntries.get(product.getId()).getQuantity()));
+        productRepository.saveAll(productsFromOrder);
 
+        ProductQuantityRestoredEvent event = new ProductQuantityRestoredEvent(orderId);
+        log(logger, "{} Updated products quantity to approve the order {}, publishing {}",
+                CANCEL_ORDER_PREFIX, orderId, event.getClass().getSimpleName());
+        domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 
-    private static String joinProductIds(Map<Long, ProductOrderEntry> productEntries) {
+    private static String joinProductIds(Map<String, ProductOrderEntry> productEntries) {
         return productEntries.keySet().stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
