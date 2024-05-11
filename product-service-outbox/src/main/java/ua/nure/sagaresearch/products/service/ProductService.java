@@ -78,7 +78,7 @@ public class ProductService {
     //  4.1 This method restores the product quantity for cancelled orders. It will be very similar to 'decrease..' one
     //  4.2 Find all products and increase their quantity in the warehouse.
     //  4.3 Log the results and publish the ProductQuantityRestoredEvent
-    public void restoreProductsQuantityForOrder(long orderId, Map<String , ProductOrderEntry> productEntries) {
+    public void restoreProductsQuantityForOrder(long orderId, Map<String, ProductOrderEntry> productEntries) {
         Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
         productsFromOrder.forEach(product -> product.increaseQuantity(productEntries.get(product.getId()).getQuantity()));
         productRepository.saveAll(productsFromOrder);
