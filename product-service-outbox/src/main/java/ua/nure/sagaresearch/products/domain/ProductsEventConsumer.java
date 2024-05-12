@@ -57,9 +57,6 @@ public class ProductsEventConsumer {
         productService.reserveProductsQuantityForOrder(orderId, event.getProductEntries());
     }
 
-    // TODO [Cancel Order SAGA] Step 3:
-    //  3.1 Here you are accepting the event. Retrieve event, orderId, log that you received it
-    //  3.2 Call the productService.restoreProductsQuantityForOrder
     private void handleOrderCancellationRequestedEvent(DomainEventEnvelope<OrderCancellationRequestedEvent> domainEventEnvelope) {
         OrderCancellationRequestedEvent event = domainEventEnvelope.getEvent();
         long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());

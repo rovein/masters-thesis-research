@@ -103,17 +103,13 @@ public class OrderService {
                 orderId, singletonList(new OrderRejectedEvent(order.getOrderDetails())));
     }
 
-    // TODO [Cancel Order SAGA] Step 2:
-    //  2.1 Get the order
-    //  2.2 Change the state to CANCELLATION_REQUESTED (you have to add it to enum)
-    //  2.3 Publish the OrderCancellationRequestedEvent (it is present, you need to fill it with order.getProductEntries())
     @Transactional
     public Order requestCancellation(Long orderId) {
         Order order = getOrder(orderId);
         order.setState(OrderState.CANCELLATION_REQUESTED);
         OrderCancellationRequestedEvent event = new OrderCancellationRequestedEvent(order.getProductEntries());
 
-        log(logger, "{} Cancellation requested the order {}, publishing the {}",
+        log(logger, "{} Cancellation requested for the order {}, publishing the {}",
                 CANCEL_ORDER_PREFIX, orderId, event.getClass().getSimpleName());
 
         domainEventPublisher.publish(Order.class, orderId, Collections.singletonList(event));

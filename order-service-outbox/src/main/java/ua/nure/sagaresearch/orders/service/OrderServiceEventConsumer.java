@@ -51,9 +51,6 @@ public class OrderServiceEventConsumer {
         orderService.approveOrder(orderId);
     }
 
-    // TODO [Cancel Order SAGA] Step 5:
-    //  5.1 restore the event metadata, log it
-    //  5.2 Call orderService.cancelOrder (already implemented)
     private void handleProductQuantityRestoredEvent(DomainEventEnvelope<ProductQuantityRestoredEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
         var orderId = event.getOrderId();

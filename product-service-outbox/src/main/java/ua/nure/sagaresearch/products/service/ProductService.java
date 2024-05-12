@@ -69,22 +69,18 @@ public class ProductService {
         productRepository.saveAll(productsFromOrder);
 
         ProductQuantityReservedEvent event = new ProductQuantityReservedEvent(orderId);
-        log(logger, "{} Updated products quantity to approve the order {}, publishing {}",
+        log(logger, "{} Reserves products quantity to approve the order {}, publishing {}",
                 CONFIRM_PAYMENT_PREFIX, orderId, event.getClass().getSimpleName());
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
 
-    // TODO [Cancel Order SAGA] Step 4:
-    //  4.1 This method restores the product quantity for cancelled orders. It will be very similar to 'decrease..' one
-    //  4.2 Find all products and increase their quantity in the warehouse.
-    //  4.3 Log the results and publish the ProductQuantityRestoredEvent
     public void restoreProductsQuantityForOrder(long orderId, Map<String, ProductOrderEntry> productEntries) {
         Iterable<Product> productsFromOrder = productRepository.findAllById(productEntries.keySet());
         productsFromOrder.forEach(product -> product.increaseQuantity(productEntries.get(product.getId()).getQuantity()));
         productRepository.saveAll(productsFromOrder);
 
         ProductQuantityRestoredEvent event = new ProductQuantityRestoredEvent(orderId);
-        log(logger, "{} Updated products quantity to approve the order {}, publishing {}",
+        log(logger, "{} Restored products quantity to cancel the order {}, publishing {}",
                 CANCEL_ORDER_PREFIX, orderId, event.getClass().getSimpleName());
         domainEventPublisher.publish(Product.class, joinProductIds(productEntries), Collections.singletonList(event));
     }
