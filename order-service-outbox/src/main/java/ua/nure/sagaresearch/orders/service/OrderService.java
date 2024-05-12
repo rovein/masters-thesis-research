@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.orders.service;
 
 import static java.util.Collections.singletonList;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
@@ -16,6 +17,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;
 import ua.nure.sagaresearch.orders.domain.events.OrderApprovedEvent;
+import ua.nure.sagaresearch.orders.domain.events.OrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderCancelledEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderDetails;
 import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
@@ -93,11 +95,26 @@ public class OrderService {
                 orderId, singletonList(event));
     }
 
+    // TODO: remove it when Event Sourcing is implemented
     public void rejectOrder(Long orderId) {
         Order order = getOrder(orderId);
         order.onPaymentFailed();
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(new OrderRejectedEvent(order.getOrderDetails())));
+    }
+
+    @Transactional
+    public Order requestCancellation(Long orderId) {
+        Order order = getOrder(orderId);
+        order.setState(OrderState.CANCELLATION_REQUESTED);
+        OrderCancellationRequestedEvent event = new OrderCancellationRequestedEvent(order.getProductEntries());
+
+        log(logger, "{} Cancellation requested for the order {}, publishing the {}",
+                CANCEL_ORDER_PREFIX, orderId, event.getClass().getSimpleName());
+
+        domainEventPublisher.publish(Order.class, orderId, Collections.singletonList(event));
+
+        return order;
     }
 
     @Transactional

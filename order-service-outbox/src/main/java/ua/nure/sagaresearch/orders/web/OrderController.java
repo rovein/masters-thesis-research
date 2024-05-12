@@ -60,9 +60,9 @@ public class OrderController {
         return makeSuccessfulResponse(order);
     }
 
-    @RequestMapping(value = "/orders/{orderId}/cancel", method = RequestMethod.POST)
+    @PostMapping(value = "/orders/{orderId}/cancel")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
-        Order order = orderService.cancelOrder(orderId);
+        Order order = orderService.requestCancellation(orderId);
         return makeSuccessfulResponse(order);
     }
 

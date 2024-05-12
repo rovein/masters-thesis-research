@@ -82,7 +82,7 @@ public class Order {
         switch (state) {
             case PENDING:
                 throw new PendingOrderCantBeCancelledException();
-            case APPROVED:
+            case CANCELLATION_REQUESTED:
                 this.state = OrderState.CANCELLED;
                 return;
             default:

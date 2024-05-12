@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.products.domain;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
 
@@ -10,6 +11,7 @@ import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.baskets.domain.events.ProductAddedToBasketEvent;
+import ua.nure.sagaresearch.orders.domain.events.OrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.products.service.ProductService;
 
@@ -29,6 +31,7 @@ public class ProductsEventConsumer {
                     .onEvent(ProductAddedToBasketEvent.class, this::productAddedToBasketEventHandler)
                 .andForAggregateType("ua.nure.sagaresearch.orders.domain.Order")
                     .onEvent(OrderPaymentConfirmedEvent.class, this::handleOrderPaymentConfirmedEvent)
+                    .onEvent(OrderCancellationRequestedEvent.class, this::handleOrderCancellationRequestedEvent)
                 .build();
     }
 
@@ -52,5 +55,14 @@ public class ProductsEventConsumer {
                 CONFIRM_PAYMENT_PREFIX, event.getClass().getSimpleName(), orderId);
 
         productService.reserveProductsQuantityForOrder(orderId, event.getProductEntries());
+    }
+
+    private void handleOrderCancellationRequestedEvent(DomainEventEnvelope<OrderCancellationRequestedEvent> domainEventEnvelope) {
+        OrderCancellationRequestedEvent event = domainEventEnvelope.getEvent();
+        long orderId = Long.parseLong(domainEventEnvelope.getAggregateId());
+        log(logger, "{} Handling {} for order {}",
+                CANCEL_ORDER_PREFIX, event.getClass().getSimpleName(), orderId);
+
+        productService.restoreProductsQuantityForOrder(orderId, event.getProductEntries());
     }
 }
