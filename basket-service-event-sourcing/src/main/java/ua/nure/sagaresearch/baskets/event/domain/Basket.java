@@ -3,6 +3,7 @@ package ua.nure.sagaresearch.baskets.event.domain;
 import static ua.nure.sagaresearch.common.util.BasketServiceUtil.addProductEntryToBasket;
 import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEntryPrice;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
 
 import io.eventuate.Event;
@@ -12,6 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketCheckedOutEvent;
+import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketClearedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketCreatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductPriceUpdatedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketProductValidationHandledEvent;
@@ -76,5 +79,29 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     public void apply(SourcingBasketProductPriceUpdatedEvent event) {
         updateProductEntryPrice(this, event.getProductId(), event.getActualPricePerUnit());
+    }
+
+    public List<Event> process(CheckoutBasketCommand cmd) {
+        String orderId = cmd.getOrderId();
+        SourcingBasketCheckedOutEvent event = new SourcingBasketCheckedOutEvent(orderId, totalPrice, productEntries);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_PLACE_ORDER_PREFIX);
+        return EventUtil.events(event);
+    }
+
+    public void apply(SourcingBasketCheckedOutEvent event) {
+
+    }
+
+    public List<Event> process(ClearBasketCommand cmd) {
+        String orderId = cmd.getOrderId();
+        SourcingBasketClearedEvent event = new SourcingBasketClearedEvent(orderId);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_PLACE_ORDER_PREFIX);
+        return EventUtil.events(event);
+    }
+
+    public void apply(SourcingBasketClearedEvent event) {
+        this.totalQuantity = 0L;
+        this.totalPrice = Money.ZERO;
+        this.productEntries = new HashMap<>();
     }
 }

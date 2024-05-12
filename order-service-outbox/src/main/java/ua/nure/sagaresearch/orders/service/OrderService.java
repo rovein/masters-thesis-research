@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.orders.service;
 
 import static java.util.Collections.singletonList;
+import static ua.nure.sagaresearch.common.util.ConverterUtil.convertToProductOrderEntries;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
@@ -12,8 +13,8 @@ import io.eventuate.tram.events.publisher.ResultWithEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
 import ua.nure.sagaresearch.orders.domain.Order;
 import ua.nure.sagaresearch.orders.domain.OrderRepository;
 import ua.nure.sagaresearch.orders.domain.events.OrderApprovedEvent;
@@ -24,11 +25,9 @@ import ua.nure.sagaresearch.orders.domain.events.OrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderPlacedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderRejectedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderState;
-import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OrderService {
 
@@ -130,13 +129,5 @@ public class OrderService {
         return orderRepository
                 .findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("order with id %s not found", orderId)));
-    }
-
-    private Map<String, ProductOrderEntry> convertToProductOrderEntries(Map<String, ProductBasketEntry> productEntries) {
-        return productEntries.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                    ProductBasketEntry productEntry = entry.getValue();
-                    return new ProductOrderEntry(productEntry.getProductId(), productEntry.getQuantity(), productEntry.getPrice());
-                }));
     }
 }

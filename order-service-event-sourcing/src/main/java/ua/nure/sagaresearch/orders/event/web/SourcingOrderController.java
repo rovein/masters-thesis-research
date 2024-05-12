@@ -1,12 +1,12 @@
 package ua.nure.sagaresearch.orders.event.web;
 
-import io.eventuate.EntityNotFoundException;
+import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
+import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
+
 import io.eventuate.EntityWithIdAndVersion;
-import io.eventuate.EntityWithMetadata;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,22 +42,16 @@ public class SourcingOrderController {
     @GetMapping(value = "/orders/{orderId}")
     @Operation(summary = "Get order by its ID", tags = "Order")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderId) {
-        EntityWithMetadata<Order> orderWithMetadata;
-        try {
-            orderWithMetadata = sourcingOrderService.findById(orderId);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return makeSuccessfulResponse(orderId, orderWithMetadata.getEntity());
+        return supplyAndConvertToResponseEntity(() -> toEntityWithIdAndVersion(sourcingOrderService.findById(orderId)), this::convertToOrderResponseDto);
     }
 
-    private ResponseEntity<GetOrderResponse> makeSuccessfulResponse(String orderId, Order order) {
-        return new ResponseEntity<>(new GetOrderResponse(
+    private GetOrderResponse convertToOrderResponseDto(String orderId, Order order) {
+        return new GetOrderResponse(
                 orderId,
                 order.getState(),
                 order.getOrderDetails().getBasketId(),
                 order.getTotalPrice(),
                 order.getProductEntries().values()
-        ), HttpStatus.OK);
+        );
     }
 }

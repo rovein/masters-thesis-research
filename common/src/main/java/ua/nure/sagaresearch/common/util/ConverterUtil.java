@@ -5,10 +5,14 @@ import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
+import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public final class ConverterUtil {
 
@@ -29,5 +33,13 @@ public final class ConverterUtil {
 
     public static <T extends Aggregate<T>> EntityWithIdAndVersion<T> toEntityWithIdAndVersion(EntityWithMetadata<T> entityWithMetadata) {
         return new EntityWithIdAndVersion<>(entityWithMetadata.getEntityIdAndVersion(), entityWithMetadata.getEntity());
+    }
+
+    public static Map<String, ProductOrderEntry> convertToProductOrderEntries(Map<String, ProductBasketEntry> productEntries) {
+        return productEntries.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                    ProductBasketEntry productEntry = entry.getValue();
+                    return new ProductOrderEntry(productEntry.getProductId(), productEntry.getQuantity(), productEntry.getPrice());
+                }));
     }
 }

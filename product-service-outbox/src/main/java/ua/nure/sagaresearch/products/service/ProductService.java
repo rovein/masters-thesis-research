@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ua.nure.sagaresearch.common.domain.Money;
-import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
+import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
 import ua.nure.sagaresearch.products.domain.Product;
 import ua.nure.sagaresearch.products.domain.ProductRepository;
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.events.OrderState;
-import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
+import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
 
 import java.util.Collection;
 

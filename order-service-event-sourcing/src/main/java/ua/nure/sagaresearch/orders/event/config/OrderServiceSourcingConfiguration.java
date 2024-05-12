@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ua.nure.sagaresearch.orders.event.domain.Order;
 import ua.nure.sagaresearch.orders.event.domain.OrderCommand;
+import ua.nure.sagaresearch.orders.event.service.OrderWorkflow;
 
 @Configuration
 public class OrderServiceSourcingConfiguration {
@@ -13,5 +14,10 @@ public class OrderServiceSourcingConfiguration {
     @Bean
     public AggregateRepository<Order, OrderCommand> sourcingOrderRepository(EventuateAggregateStore eventStore) {
         return new AggregateRepository<>(Order.class, eventStore);
+    }
+
+    @Bean
+    public OrderWorkflow orderWorkflow() {
+        return new OrderWorkflow();
     }
 }

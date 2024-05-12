@@ -15,6 +15,7 @@ public final class LoggingUtils {
     public static final String CANCEL_ORDER_PREFIX = "[OUTBOX Cancel Order SAGA]";
 
     public static final String EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX = "[Add Product to Basket SAGA] Event Sourcing.";
+    public static final String EVENT_SOURCING_PLACE_ORDER_PREFIX = "[Place Order SAGA] Event Sourcing.";
 
     /**
      * Util logging method that has small delay needed to correctly display the order of logs

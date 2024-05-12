@@ -10,7 +10,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.orders.domain.events.OrderDetails;
 import ua.nure.sagaresearch.orders.domain.events.OrderPlacementRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.OrderState;
-import ua.nure.sagaresearch.orders.domain.events.ProductOrderEntry;
+import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
