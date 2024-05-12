@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.products.event.domain;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
 
@@ -13,6 +14,7 @@ import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBaske
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBasketPriceHasChangedEvent;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductCreatedEvent;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductQuantityReservedEvent;
+import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductQuantityRestoredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.common.domain.Money;
@@ -45,6 +47,10 @@ public class Product extends ReflectiveMutableCommandProcessingAggregate<Product
 
     public void decreaseQuantity(long decreaseValue) {
         this.productQuantity = productQuantity - decreaseValue;
+    }
+
+    public void increaseQuantity(long increaseValue) {
+        this.productQuantity = productQuantity + increaseValue;
     }
 
     public List<Event> process(CreateProductCommand cmd) {
@@ -93,5 +99,18 @@ public class Product extends ReflectiveMutableCommandProcessingAggregate<Product
 
     public void apply(SourcingProductQuantityReservedEvent event) {
         this.decreaseQuantity(event.getQuantity());
+    }
+
+    public List<Event> process(RestoreProductQuantityCommand cmd) {
+        String orderId = cmd.getOrderId();
+        long quantity = cmd.getQuantity();
+
+        Event event = new SourcingProductQuantityRestoredEvent(orderId, quantity);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CANCEL_ORDER_PREFIX, event);
+        return EventUtil.events(event);
+    }
+
+    public void apply(SourcingProductQuantityRestoredEvent event) {
+        this.increaseQuantity(event.getQuantity());
     }
 }

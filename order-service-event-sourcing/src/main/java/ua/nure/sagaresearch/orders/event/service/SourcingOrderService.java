@@ -9,6 +9,7 @@ import ua.nure.sagaresearch.orders.event.domain.ConfirmPaymentCommand;
 import ua.nure.sagaresearch.orders.event.domain.CreateOrderCommand;
 import ua.nure.sagaresearch.orders.event.domain.Order;
 import ua.nure.sagaresearch.orders.event.domain.OrderCommand;
+import ua.nure.sagaresearch.orders.event.domain.RequestOrderCancellationCommand;
 
 
 @Service
@@ -26,5 +27,9 @@ public class SourcingOrderService {
 
     public EntityWithIdAndVersion<Order> confirmPayment(String orderId) {
         return orderRepository.update(orderId, new ConfirmPaymentCommand());
+    }
+
+    public EntityWithIdAndVersion<Order> requestCancellation(String orderId) {
+        return orderRepository.update(orderId, new RequestOrderCancellationCommand());
     }
 }

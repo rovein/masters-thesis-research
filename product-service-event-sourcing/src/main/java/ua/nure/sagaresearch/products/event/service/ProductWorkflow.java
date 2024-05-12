@@ -5,9 +5,11 @@ import io.eventuate.EventHandlerMethod;
 import io.eventuate.EventSubscriber;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingProductAddedToBasketEvent;
 import ua.nure.sagaresearch.common.domain.Money;
+import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.products.event.domain.Product;
 import ua.nure.sagaresearch.products.event.domain.ReserveProductQuantityCommand;
+import ua.nure.sagaresearch.products.event.domain.RestoreProductQuantityCommand;
 import ua.nure.sagaresearch.products.event.domain.ValidateProductAddedToBasketCommand;
 
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +37,17 @@ public class ProductWorkflow {
         long quantity = event.getQuantity();
 
         return ctx.update(Product.class, productId, new ReserveProductQuantityCommand(orderId, quantity));
+    }
+
+    @EventHandlerMethod
+    public CompletableFuture<?> restoreProduct(
+            EventHandlerContext<SourcingOrderCancellationRequestedEvent> ctx) {
+        SourcingOrderCancellationRequestedEvent event = ctx.getEvent();
+        String productId = event.getProductId();
+        String orderId = ctx.getEntityId();
+        long quantity = event.getQuantity();
+
+        return ctx.update(Product.class, productId, new RestoreProductQuantityCommand(orderId, quantity));
     }
 
 }

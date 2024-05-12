@@ -45,6 +45,12 @@ public class SourcingOrderController {
         return supplyAndConvertToResponseEntity(() -> sourcingOrderService.confirmPayment(orderId), this::convertToOrderResponseDto);
     }
 
+    @PostMapping(value = "/orders/{orderId}/cancel")
+    @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
+    public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable String orderId) {
+        return supplyAndConvertToResponseEntity(() -> sourcingOrderService.requestCancellation(orderId), this::convertToOrderResponseDto);
+    }
+
     @GetMapping(value = "/orders/{orderId}")
     @Operation(summary = "Get order by its ID", tags = "Order")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderId) {

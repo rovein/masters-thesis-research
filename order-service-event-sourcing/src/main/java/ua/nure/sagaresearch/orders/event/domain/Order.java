@@ -1,6 +1,8 @@
 package ua.nure.sagaresearch.orders.event.domain;
 
 import static ua.nure.sagaresearch.common.util.ConverterUtil.convertToProductOrderEntries;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
@@ -18,10 +20,13 @@ import ua.nure.sagaresearch.orders.domain.events.OrderDetails;
 import ua.nure.sagaresearch.orders.domain.events.OrderState;
 import ua.nure.sagaresearch.common.domain.product.ProductOrderEntryStatus;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderApprovedEvent;
+import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderCancellationRequestedEvent;
+import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderCancelledEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderPaymentConfirmedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderPlacedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderPlacementRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingProductReservedEvent;
+import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingProductRestoredEvent;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -113,9 +118,49 @@ public class Order extends ReflectiveMutableCommandProcessingAggregate<Order, Or
         this.state = OrderState.APPROVED;
     }
 
+    public List<Event> process(ApplyProductQuantityRestorationCommand cmd) {
+        String productId = cmd.getProductId();
+        setProductEntryStatus(productId, ProductOrderEntryStatus.RESTORED);
+
+        List<Event> events = new ArrayList<>(List.of(new SourcingProductRestoredEvent(productId)));
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CANCEL_ORDER_PREFIX, "waiting till all products are restored");
+        if (allProductsAreRestored()) {
+            SourcingOrderCancelledEvent event = new SourcingOrderCancelledEvent(this.orderDetails);
+            logAggregateProcessMethod(LOGGER, this.getClass(), cmd, CANCEL_ORDER_PREFIX, event);
+            events.add(event);
+        }
+        return events;
+    }
+
+    public void apply(SourcingProductRestoredEvent event) {
+        setProductEntryStatus(event.getProductId(), ProductOrderEntryStatus.RESTORED);
+    }
+
+    public void apply(SourcingOrderCancelledEvent event) {
+        this.state = OrderState.CANCELLED;
+    }
+
+    public List<Event> process(RequestOrderCancellationCommand cmd) {
+        return productEntries.values().stream()
+                .map(productOrderEntry -> new SourcingOrderCancellationRequestedEvent(productOrderEntry.getProductId(), productOrderEntry.getQuantity()))
+                .peek(event -> logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CANCEL_ORDER_PREFIX,
+                        "requesting quantity restoration for product %s".formatted(event.getProductId())))
+                .map(event -> (Event) event)
+                .toList();
+    }
+
+    public void apply(SourcingOrderCancellationRequestedEvent event) {
+        this.state = OrderState.CANCELLATION_REQUESTED;
+    }
+
     private boolean allProductsAreReserved() {
         return this.productEntries.values().stream()
                 .allMatch(productOrderEntry -> productOrderEntry.getStatus() == ProductOrderEntryStatus.RESERVED);
+    }
+
+    private boolean allProductsAreRestored() {
+        return this.productEntries.values().stream()
+                .allMatch(productOrderEntry -> productOrderEntry.getStatus() == ProductOrderEntryStatus.RESTORED);
     }
 
     private void setProductEntryStatus(String productId, ProductOrderEntryStatus status) {
