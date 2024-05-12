@@ -21,4 +21,6 @@ public class ProductOrderEntry {
 
     @Embedded
     private Money price;
+
+    private ProductOrderEntryStatus status;
 }

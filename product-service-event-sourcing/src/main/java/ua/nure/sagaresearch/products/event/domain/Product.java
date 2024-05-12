@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.products.event.domain;
 
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
 
 import io.eventuate.Event;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBasketAdditionValidatedEvent;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductBasketPriceHasChangedEvent;
 import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductCreatedEvent;
+import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductQuantityReservedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.common.domain.Money;
@@ -41,6 +43,10 @@ public class Product extends ReflectiveMutableCommandProcessingAggregate<Product
     @ElementCollection
     private Map<Long, ProductProperty> productProperties;
 
+    public void decreaseQuantity(long decreaseValue) {
+        this.productQuantity = productQuantity - decreaseValue;
+    }
+
     public List<Event> process(CreateProductCommand cmd) {
         return EventUtil.events(new SourcingProductCreatedEvent(
                 cmd.getProductName(),
@@ -66,7 +72,7 @@ public class Product extends ReflectiveMutableCommandProcessingAggregate<Product
         Event event = Objects.equals(priceFromBasket, productPrice)
                 ? new SourcingProductBasketAdditionValidatedEvent(basketId)
                 : new SourcingProductBasketPriceHasChangedEvent(basketId, productPrice);
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -74,5 +80,18 @@ public class Product extends ReflectiveMutableCommandProcessingAggregate<Product
     }
 
     public void apply(SourcingProductBasketPriceHasChangedEvent event) {
+    }
+
+    public List<Event> process(ReserveProductQuantityCommand cmd) {
+        String orderId = cmd.getOrderId();
+        long quantity = cmd.getQuantity();
+
+        Event event = new SourcingProductQuantityReservedEvent(orderId, quantity);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX, event);
+        return EventUtil.events(event);
+    }
+
+    public void apply(SourcingProductQuantityReservedEvent event) {
+        this.decreaseQuantity(event.getQuantity());
     }
 }

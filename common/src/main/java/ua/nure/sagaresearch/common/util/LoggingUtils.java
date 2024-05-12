@@ -16,6 +16,7 @@ public final class LoggingUtils {
 
     public static final String EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX = "[Add Product to Basket SAGA] Event Sourcing.";
     public static final String EVENT_SOURCING_PLACE_ORDER_PREFIX = "[Place Order SAGA] Event Sourcing.";
+    public static final String EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX = "[Confirm Payment SAGA] Event Sourcing.";
 
     /**
      * Util logging method that has small delay needed to correctly display the order of logs
@@ -30,9 +31,14 @@ public final class LoggingUtils {
         logger.info(format, arguments);
     }
 
-    public static void logAggregateProcessMethod(Logger logger, Class<? extends Aggregate<?>> aggregateClass, Command cmd, Event event, String sagaPrefix) {
+    public static void logAggregateProcessMethod(Logger logger, Class<? extends Aggregate<?>> aggregateClass, Command cmd, String sagaPrefix, Event event) {
         log(logger, "{} Aggregate {}, processing {}, propagating {}",
                 sagaPrefix, aggregateClass.getSimpleName(), cmd.getClass().getSimpleName(), event.getClass().getSimpleName());
+    }
+
+    public static void logAggregateProcessMethod(Logger logger, Class<? extends Aggregate<?>> aggregateClass, Command cmd, String sagaPrefix, String message) {
+        log(logger, "{} Aggregate {}, processing {}, {}",
+                sagaPrefix, aggregateClass.getSimpleName(), cmd.getClass().getSimpleName(), message);
     }
 
     private LoggingUtils() {

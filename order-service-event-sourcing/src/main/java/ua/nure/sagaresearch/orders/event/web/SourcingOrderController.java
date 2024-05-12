@@ -39,6 +39,12 @@ public class SourcingOrderController {
         return new CreateOrderResponse(entity.getEntityId());
     }
 
+    @PostMapping(value = "/orders/{orderId}/confirm-payment")
+    @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
+    public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable String orderId) {
+        return supplyAndConvertToResponseEntity(() -> sourcingOrderService.confirmPayment(orderId), this::convertToOrderResponseDto);
+    }
+
     @GetMapping(value = "/orders/{orderId}")
     @Operation(summary = "Get order by its ID", tags = "Order")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderId) {

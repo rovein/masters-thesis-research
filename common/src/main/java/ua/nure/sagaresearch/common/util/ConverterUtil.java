@@ -1,5 +1,7 @@
 package ua.nure.sagaresearch.common.util;
 
+import static ua.nure.sagaresearch.common.domain.product.ProductOrderEntryStatus.PENDING;
+
 import io.eventuate.Aggregate;
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
@@ -39,7 +41,7 @@ public final class ConverterUtil {
         return productEntries.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                     ProductBasketEntry productEntry = entry.getValue();
-                    return new ProductOrderEntry(productEntry.getProductId(), productEntry.getQuantity(), productEntry.getPrice());
+                    return new ProductOrderEntry(productEntry.getProductId(), productEntry.getQuantity(), productEntry.getPrice(), PENDING);
                 }));
     }
 }

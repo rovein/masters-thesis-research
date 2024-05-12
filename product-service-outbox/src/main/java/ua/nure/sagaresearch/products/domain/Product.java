@@ -1,6 +1,5 @@
 package ua.nure.sagaresearch.products.domain;
 
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -53,9 +52,7 @@ public class Product {
     }
 
     public void decreaseQuantity(long decreaseValue) {
-        long newQuantity = productQuantity - decreaseValue;
-        Preconditions.checkState(newQuantity >= 0, "New quantity is going to be " + newQuantity);
-        this.productQuantity = newQuantity;
+        this.productQuantity = productQuantity - decreaseValue;
     }
 
     public void increaseQuantity(long increaseValue) {

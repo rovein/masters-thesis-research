@@ -5,6 +5,7 @@ import io.eventuate.EntityWithMetadata;
 import io.eventuate.sync.AggregateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.nure.sagaresearch.orders.event.domain.ConfirmPaymentCommand;
 import ua.nure.sagaresearch.orders.event.domain.CreateOrderCommand;
 import ua.nure.sagaresearch.orders.event.domain.Order;
 import ua.nure.sagaresearch.orders.event.domain.OrderCommand;
@@ -21,5 +22,9 @@ public class SourcingOrderService {
 
     public EntityWithMetadata<Order> findById(String productId) {
         return orderRepository.find(productId);
+    }
+
+    public EntityWithIdAndVersion<Order> confirmPayment(String orderId) {
+        return orderRepository.update(orderId, new ConfirmPaymentCommand());
     }
 }

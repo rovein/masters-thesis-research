@@ -41,7 +41,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     public List<Event> process(CreateBasketCommand cmd) {
         SourcingBasketCreatedEvent event = new SourcingBasketCreatedEvent();
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -53,7 +53,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     public List<Event> process(AddProductToBasketCommand cmd) {
         SourcingProductAddedToBasketEvent event = new SourcingProductAddedToBasketEvent(cmd.getProductId(), cmd.getQuantity(), cmd.getPricePerUnit());
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -63,7 +63,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     public List<Event> process(HandleProductValidationCommand cmd) {
         SourcingBasketProductValidationHandledEvent event = new SourcingBasketProductValidationHandledEvent(cmd.getProductId());
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -73,7 +73,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
 
     public List<Event> process(UpdateBasketProductPriceCommand cmd) {
         SourcingBasketProductPriceUpdatedEvent event = new SourcingBasketProductPriceUpdatedEvent(cmd.getProductId(), cmd.getActualPricePerUnit());
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -84,7 +84,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
     public List<Event> process(CheckoutBasketCommand cmd) {
         String orderId = cmd.getOrderId();
         SourcingBasketCheckedOutEvent event = new SourcingBasketCheckedOutEvent(orderId, totalPrice, productEntries);
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_PLACE_ORDER_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_PLACE_ORDER_PREFIX, event);
         return EventUtil.events(event);
     }
 
@@ -95,7 +95,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
     public List<Event> process(ClearBasketCommand cmd) {
         String orderId = cmd.getOrderId();
         SourcingBasketClearedEvent event = new SourcingBasketClearedEvent(orderId);
-        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, event, EVENT_SOURCING_PLACE_ORDER_PREFIX);
+        logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_PLACE_ORDER_PREFIX, event);
         return EventUtil.events(event);
     }
 

@@ -3,9 +3,11 @@ package ua.nure.sagaresearch.orders.event.service;
 import io.eventuate.EventHandlerContext;
 import io.eventuate.EventHandlerMethod;
 import io.eventuate.EventSubscriber;
+import nure.ua.sagaresearch.products.domain.events.sourcing.SourcingProductQuantityReservedEvent;
 import ua.nure.sagaresearch.baskets.domain.events.sourcing.SourcingBasketCheckedOutEvent;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.common.domain.basket.ProductBasketEntry;
+import ua.nure.sagaresearch.orders.event.domain.ApplyProductQuantityReservationCommand;
 import ua.nure.sagaresearch.orders.event.domain.FillOrderWithProductEntriesCommand;
 import ua.nure.sagaresearch.orders.event.domain.Order;
 
@@ -25,5 +27,15 @@ public class OrderWorkflow {
         String orderId = event.getOrderId();
 
         return ctx.update(Order.class, orderId, new FillOrderWithProductEntriesCommand(basketId, totalPrice, productEntries));
+    }
+
+    @EventHandlerMethod
+    public CompletableFuture<?> handleProductQuantityReserved(
+            EventHandlerContext<SourcingProductQuantityReservedEvent> ctx) {
+        SourcingProductQuantityReservedEvent event = ctx.getEvent();
+        String orderId = event.getOrderId();
+        String productId = ctx.getEntityId();
+
+        return ctx.update(Order.class, orderId, new ApplyProductQuantityReservationCommand(productId));
     }
 }
