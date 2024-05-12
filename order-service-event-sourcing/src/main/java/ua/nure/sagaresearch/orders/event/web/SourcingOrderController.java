@@ -3,6 +3,8 @@ package ua.nure.sagaresearch.orders.event.web;
 import io.eventuate.EntityNotFoundException;
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,14 @@ import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 @RestController
 @RequestMapping("/event-sourcing")
 @RequiredArgsConstructor
+@Tag(name = "Order", description = "Event Sourcing Order API")
 public class SourcingOrderController {
 
     private final SourcingOrderService sourcingOrderService;
 
     @PostMapping(value = "/orders")
-    public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
+    public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         EntityWithIdAndVersion<Order> entity = sourcingOrderService.createOrder(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),
@@ -36,6 +40,7 @@ public class SourcingOrderController {
     }
 
     @GetMapping(value = "/orders/{orderId}")
+    @Operation(summary = "Get order by its ID", tags = "Order")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderId) {
         EntityWithMetadata<Order> orderWithMetadata;
         try {

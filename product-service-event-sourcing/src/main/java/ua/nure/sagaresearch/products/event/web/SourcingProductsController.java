@@ -3,6 +3,8 @@ package ua.nure.sagaresearch.products.event.web;
 import io.eventuate.EntityNotFoundException;
 import io.eventuate.EntityWithIdAndVersion;
 import io.eventuate.EntityWithMetadata;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,13 @@ import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
 @RestController
 @RequestMapping("/event-sourcing")
 @AllArgsConstructor
+@Tag(name = "Product", description = "Event Sourcing Product API")
 public class SourcingProductsController {
 
     private final SourcingProductService sourcingProductService;
 
     @PostMapping(value = "/products")
+    @Operation(summary = "Create product and receive product ID", tags = "Product")
     public String createProduct(@RequestBody CreateProductRequest request) {
         EntityWithIdAndVersion<Product> entity = sourcingProductService.createProduct(
                 request.getProductName(),
@@ -36,6 +40,7 @@ public class SourcingProductsController {
     }
 
     @GetMapping(value = "/products/{productId}")
+    @Operation(summary = "Get product by its ID", tags = "Product")
     public ResponseEntity<Product> getProduct(@PathVariable String productId) {
         EntityWithMetadata<Product> productWithMetadata;
         try {

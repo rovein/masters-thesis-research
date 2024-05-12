@@ -2,6 +2,8 @@ package ua.nure.sagaresearch.orders.web;
 
 import io.eventuate.common.json.mapper.JSonMapper;
 import io.eventuate.tram.viewsupport.rebuild.DomainSnapshotExportService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
 import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 
 @RestController
+@Tag(name = "Order", description = "OUTBOX Order API")
 public class OrderController {
 
     private OrderService orderService;
@@ -37,7 +40,8 @@ public class OrderController {
     }
 
     @PostMapping(value = "/orders")
-    public CreateOrderResponse createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+    @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
+    public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         Order order = orderService.createOrder(new OrderDetails(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),
@@ -47,6 +51,7 @@ public class OrderController {
     }
 
     @GetMapping(value = "/orders/{orderId}")
+    @Operation(summary = "Get order by its ID", tags = "Order")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable Long orderId) {
         return orderRepository
                 .findById(orderId)
@@ -54,13 +59,15 @@ public class OrderController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping(value = "/orders/{orderId}/confirmPayment")
+    @PostMapping(value = "/orders/{orderId}/confirm-payment")
+    @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable Long orderId) {
         Order order = orderService.confirmPayment(orderId);
         return makeSuccessfulResponse(order);
     }
 
     @PostMapping(value = "/orders/{orderId}/cancel")
+    @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
         Order order = orderService.requestCancellation(orderId);
         return makeSuccessfulResponse(order);

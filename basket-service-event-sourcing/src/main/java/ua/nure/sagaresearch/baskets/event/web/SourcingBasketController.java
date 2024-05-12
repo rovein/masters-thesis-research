@@ -3,6 +3,8 @@ package ua.nure.sagaresearch.baskets.event.web;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,21 +22,25 @@ import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;
 @RestController
 @RequestMapping("/event-sourcing")
 @RequiredArgsConstructor
+@Tag(name = "Basket", description = "Event Sourcing Basket API")
 public class SourcingBasketController {
 
     private final SourcingBasketService sourcingBasketService;
 
     @PostMapping(value = "/baskets")
+    @Operation(summary = "Create basket and receive basket ID", tags = "Basket")
     public String createBasket() {
         return sourcingBasketService.createBasket().getEntityId();
     }
 
     @GetMapping(value = "/baskets/{basketId}")
+    @Operation(summary = "Get basket by its ID", tags = "Basket")
     public ResponseEntity<BasketDtoResponse> getBasket(@PathVariable String basketId) {
         return supplyAndConvertToResponseEntity(() -> toEntityWithIdAndVersion(sourcingBasketService.findById(basketId)), this::convertToBasketDtoResponse);
     }
 
     @PostMapping(value = "/baskets/{basketId}/products")
+    @Operation(summary = "[Add Product to Basket SAGA] starting point", tags = "Basket")
     public ResponseEntity<BasketDtoResponse> addProductToBasket(@PathVariable String basketId,
                                                                 @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
         return supplyAndConvertToResponseEntity(() -> sourcingBasketService.addProductToBasket(
