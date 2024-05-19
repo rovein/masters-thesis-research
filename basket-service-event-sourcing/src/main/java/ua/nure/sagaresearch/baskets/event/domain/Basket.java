@@ -5,6 +5,7 @@ import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEn
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logEndTime;
 
 import io.eventuate.Event;
 import io.eventuate.EventUtil;
@@ -64,6 +65,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
     public List<Event> process(HandleProductValidationCommand cmd) {
         SourcingBasketProductValidationHandledEvent event = new SourcingBasketProductValidationHandledEvent(cmd.getProductId());
         logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, event);
+        logEndTime(LOGGER, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
         return EventUtil.events(event);
     }
 

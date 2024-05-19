@@ -2,10 +2,14 @@ package ua.nure.sagaresearch.baskets.event.web;
 
 import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +29,8 @@ import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;
 @Tag(name = "Basket", description = "Event Sourcing Basket API")
 public class SourcingBasketController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourcingBasketController.class);
+
     private final SourcingBasketService sourcingBasketService;
 
     @PostMapping(value = "/baskets")
@@ -43,6 +49,7 @@ public class SourcingBasketController {
     @Operation(summary = "[Add Product to Basket SAGA] starting point", tags = "Basket")
     public ResponseEntity<BasketDtoResponse> addProductToBasket(@PathVariable String basketId,
                                                                 @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
+        logStartTime(LOGGER, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
         return supplyAndConvertToResponseEntity(() -> sourcingBasketService.addProductToBasket(
                 basketId,
                 addProductToBasketRequest.getProductId(),
