@@ -3,6 +3,7 @@ package ua.nure.sagaresearch.baskets.service;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logEndTime;
 
 import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
 import io.eventuate.tram.events.subscriber.DomainEventHandlers;
@@ -43,6 +44,7 @@ public class BasketServiceEventConsumer {
         var event = domainEventEnvelope.getEvent();
         log(logger, "{} Received {}, transaction completed successfully for productId {} and basketId {}",
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
+        logEndTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX);
     }
 
     private void handleProductBasketPriceHasChangedEvent(DomainEventEnvelope<ProductBasketPriceHasChangedEvent> domainEventEnvelope) {

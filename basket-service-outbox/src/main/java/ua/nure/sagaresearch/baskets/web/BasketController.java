@@ -1,9 +1,14 @@
 package ua.nure.sagaresearch.baskets.web;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
+
 import io.eventuate.common.json.mapper.JSonMapper;
 import io.eventuate.tram.viewsupport.rebuild.DomainSnapshotExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +24,8 @@ import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;
 @RestController
 @Tag(name = "Basket", description = "OUTBOX Basket API")
 public class BasketController {
+
+    private static final Logger logger = LoggerFactory.getLogger(BasketController.class);
 
     private final BasketService basketService;
 
@@ -48,6 +55,7 @@ public class BasketController {
     @PostMapping(value = "/baskets/{basketId}/products")
     @Operation(summary = "[Add Product to Basket SAGA] starting point", tags = "Basket")
     public BasketDtoResponse addProductToBasket(@PathVariable Long basketId, @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
+        logStartTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX);
         Basket basket = basketService.addProductToBasket(
                 basketId,
                 addProductToBasketRequest.getProductId(),

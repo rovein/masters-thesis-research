@@ -19,16 +19,20 @@ public final class LoggingUtils {
     public static final String EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX = "[Confirm Payment SAGA] Event Sourcing.";
     public static final String EVENT_SOURCING_CANCEL_ORDER_PREFIX = "[Cancel Order SAGA] Event Sourcing.";
 
+    public static final String START_TIME = "Start time:";
+    public static final String END_TIME = "End time:";
+
     /**
      * Util logging method that has small delay needed to correctly display the order of logs
      * in Kibana for local environment experiments.
-     * @param logger logger from source class
-     * @param format format message
+     *
+     * @param logger    logger from source class
+     * @param format    format message
      * @param arguments arguments for message
      */
     @SneakyThrows
     public static void log(Logger logger, String format, Object... arguments) {
-        TimeUnit.MILLISECONDS.sleep(100L);
+        TimeUnit.MILLISECONDS.sleep(1L);
         logger.info(format, arguments);
     }
 
@@ -40,6 +44,14 @@ public final class LoggingUtils {
     public static void logAggregateProcessMethod(Logger logger, Class<? extends Aggregate<?>> aggregateClass, Command cmd, String sagaPrefix, String message) {
         log(logger, "{} Aggregate {}, processing {}, {}",
                 sagaPrefix, aggregateClass.getSimpleName(), cmd.getClass().getSimpleName(), message);
+    }
+
+    public static void logStartTime(Logger logger, String sagaPrefix) {
+        log(logger, "{} {} {}", sagaPrefix, START_TIME, System.nanoTime());
+    }
+
+    public static void logEndTime(Logger logger, String sagaPrefix) {
+        log(logger, "{} {} {}", sagaPrefix, END_TIME, System.nanoTime());
     }
 
     private LoggingUtils() {
