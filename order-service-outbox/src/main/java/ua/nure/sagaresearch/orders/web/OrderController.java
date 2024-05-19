@@ -1,5 +1,7 @@
 package ua.nure.sagaresearch.orders.web;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
 
@@ -70,6 +72,7 @@ public class OrderController {
     @PostMapping(value = "/orders/{orderId}/confirm-payment")
     @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable Long orderId) {
+        logStartTime(LOGGER, CONFIRM_PAYMENT_PREFIX);
         Order order = orderService.confirmPayment(orderId);
         return makeSuccessfulResponse(order);
     }
@@ -77,6 +80,7 @@ public class OrderController {
     @PostMapping(value = "/orders/{orderId}/cancel")
     @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
+        logStartTime(LOGGER, CANCEL_ORDER_PREFIX);
         Order order = orderService.requestCancellation(orderId);
         return makeSuccessfulResponse(order);
     }

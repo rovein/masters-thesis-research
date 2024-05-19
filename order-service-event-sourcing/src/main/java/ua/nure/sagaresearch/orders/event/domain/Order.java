@@ -6,6 +6,7 @@ import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CANCE
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logAggregateProcessMethod;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logEndTime;
 
 import io.eventuate.Event;
 import io.eventuate.EventUtil;
@@ -16,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
+import ua.nure.sagaresearch.common.domain.product.ProductOrderEntryStatus;
 import ua.nure.sagaresearch.orders.domain.events.OrderDetails;
 import ua.nure.sagaresearch.orders.domain.events.OrderState;
-import ua.nure.sagaresearch.common.domain.product.ProductOrderEntryStatus;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderApprovedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderCancellationRequestedEvent;
 import ua.nure.sagaresearch.orders.domain.events.sourcing.SourcingOrderCancelledEvent;
@@ -106,6 +107,7 @@ public class Order extends ReflectiveMutableCommandProcessingAggregate<Order, Or
             SourcingOrderApprovedEvent event = new SourcingOrderApprovedEvent(this.orderDetails);
             logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX, event);
             events.add(event);
+            logEndTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
         }
         return events;
     }
@@ -127,6 +129,7 @@ public class Order extends ReflectiveMutableCommandProcessingAggregate<Order, Or
         if (allProductsAreRestored()) {
             SourcingOrderCancelledEvent event = new SourcingOrderCancelledEvent(this.orderDetails);
             logAggregateProcessMethod(LOGGER, this.getClass(), cmd, CANCEL_ORDER_PREFIX, event);
+            logEndTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX);
             events.add(event);
         }
         return events;

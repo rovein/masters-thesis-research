@@ -2,6 +2,8 @@ package ua.nure.sagaresearch.orders.event.web;
 
 import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CANCEL_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
 
@@ -49,12 +51,14 @@ public class SourcingOrderController {
     @PostMapping(value = "/orders/{orderId}/confirm-payment")
     @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable String orderId) {
+        logStartTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
         return supplyAndConvertToResponseEntity(() -> sourcingOrderService.confirmPayment(orderId), this::convertToOrderResponseDto);
     }
 
     @PostMapping(value = "/orders/{orderId}/cancel")
     @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable String orderId) {
+        logStartTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX);
         return supplyAndConvertToResponseEntity(() -> sourcingOrderService.requestCancellation(orderId), this::convertToOrderResponseDto);
     }
 

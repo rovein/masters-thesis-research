@@ -6,6 +6,7 @@ import static ua.nure.sagaresearch.common.util.LoggingUtils.CANCEL_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.CONFIRM_PAYMENT_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logEndTime;
 
 import com.google.common.base.Preconditions;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
@@ -90,6 +91,7 @@ public class OrderService {
         OrderApprovedEvent event = new OrderApprovedEvent(order.getOrderDetails());
         log(logger, "{} Order {} is marked as {}, publishing {}",
                 CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
+        logEndTime(logger, CONFIRM_PAYMENT_PREFIX);
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(event));
     }
@@ -120,8 +122,12 @@ public class OrderService {
     public Order cancelOrder(Long orderId) {
         Order order = getOrder(orderId);
         order.cancel();
+        OrderCancelledEvent event = new OrderCancelledEvent(order.getOrderDetails());
+        log(logger, "{} Order {} is marked as {}, publishing {}",
+                CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
         domainEventPublisher.publish(Order.class,
-                orderId, singletonList(new OrderCancelledEvent(order.getOrderDetails())));
+                orderId, singletonList(event));
+        logEndTime(logger, CANCEL_ORDER_PREFIX);
         return order;
     }
 
