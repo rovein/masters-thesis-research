@@ -98,6 +98,7 @@ public class Basket extends ReflectiveMutableCommandProcessingAggregate<Basket, 
         String orderId = cmd.getOrderId();
         SourcingBasketClearedEvent event = new SourcingBasketClearedEvent(orderId);
         logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_PLACE_ORDER_PREFIX, event);
+        logEndTime(LOGGER, EVENT_SOURCING_PLACE_ORDER_PREFIX);
         return EventUtil.events(event);
     }
 

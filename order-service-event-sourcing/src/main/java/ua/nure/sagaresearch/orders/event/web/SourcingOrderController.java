@@ -2,11 +2,15 @@ package ua.nure.sagaresearch.orders.event.web;
 
 import static ua.nure.sagaresearch.common.util.ConverterUtil.supplyAndConvertToResponseEntity;
 import static ua.nure.sagaresearch.common.util.ConverterUtil.toEntityWithIdAndVersion;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.EVENT_SOURCING_PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
 
 import io.eventuate.EntityWithIdAndVersion;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,11 +30,14 @@ import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 @Tag(name = "Order", description = "Event Sourcing Order API")
 public class SourcingOrderController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourcingOrderController.class);
+
     private final SourcingOrderService sourcingOrderService;
 
     @PostMapping(value = "/orders")
     @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
     public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        logStartTime(LOGGER, EVENT_SOURCING_PLACE_ORDER_PREFIX);
         EntityWithIdAndVersion<Order> entity = sourcingOrderService.createOrder(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),

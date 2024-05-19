@@ -6,6 +6,7 @@ import static ua.nure.sagaresearch.common.util.BasketServiceUtil.updateProductEn
 import static ua.nure.sagaresearch.common.util.LoggingUtils.ADD_PRODUCT_TO_BASKET_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
 import static ua.nure.sagaresearch.common.util.LoggingUtils.log;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logEndTime;
 
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.slf4j.Logger;
@@ -94,6 +95,7 @@ public class BasketService {
 
         log(logger, "{} Basket {} successfully checked in and cleared, order {} is now pending for payment",
                 PLACE_ORDER_PREFIX, basketId, orderId);
+        logEndTime(logger, PLACE_ORDER_PREFIX);
     }
 
     private void publishProductAddedToBasketEvent(Long basketId, String productId, Money pricePerUnit) {

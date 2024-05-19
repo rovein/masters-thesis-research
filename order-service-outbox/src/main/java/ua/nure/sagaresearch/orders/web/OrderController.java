@@ -1,9 +1,14 @@
 package ua.nure.sagaresearch.orders.web;
 
+import static ua.nure.sagaresearch.common.util.LoggingUtils.PLACE_ORDER_PREFIX;
+import static ua.nure.sagaresearch.common.util.LoggingUtils.logStartTime;
+
 import io.eventuate.common.json.mapper.JSonMapper;
 import io.eventuate.tram.viewsupport.rebuild.DomainSnapshotExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +31,8 @@ import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 @Tag(name = "Order", description = "OUTBOX Order API")
 public class OrderController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
+
     private OrderService orderService;
     private OrderRepository orderRepository;
     private DomainSnapshotExportService<Order> domainSnapshotExportService;
@@ -42,6 +49,7 @@ public class OrderController {
     @PostMapping(value = "/orders")
     @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
     public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        logStartTime(LOGGER, PLACE_ORDER_PREFIX);
         Order order = orderService.createOrder(new OrderDetails(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),
