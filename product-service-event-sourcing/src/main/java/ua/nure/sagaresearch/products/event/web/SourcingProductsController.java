@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ua.nure.sagaresearch.products.webapi.ProductPurchaseDetailsDto;
 import ua.nure.sagaresearch.products.event.domain.Product;
 import ua.nure.sagaresearch.products.event.service.SourcingProductService;
 import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
@@ -26,7 +27,7 @@ public class SourcingProductsController {
 
     @PostMapping(value = "/products")
     @Operation(summary = "Create product and receive product ID", tags = "Product")
-    public String createProduct(@RequestBody CreateProductRequest request) {
+    public ProductPurchaseDetailsDto createProduct(@RequestBody CreateProductRequest request) {
         EntityWithIdAndVersion<Product> entity = sourcingProductService.createProduct(
                 request.getProductName(),
                 request.getDescription(),
@@ -34,7 +35,7 @@ public class SourcingProductsController {
                 request.getProductPrice(),
                 request.getProductQuantity()
         );
-        return entity.getEntityId();
+        return convertToProductPurchaseDetailsDto(entity.getEntityId(), entity.getAggregate());
     }
 
     @GetMapping(value = "/products/{productId}")
@@ -47,5 +48,9 @@ public class SourcingProductsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(productWithMetadata.getEntity(), HttpStatus.OK);
+    }
+
+    private ProductPurchaseDetailsDto convertToProductPurchaseDetailsDto(String id, Product product) {
+        return new ProductPurchaseDetailsDto(id, product.getProductQuantity(), product.getProductPrice());
     }
 }

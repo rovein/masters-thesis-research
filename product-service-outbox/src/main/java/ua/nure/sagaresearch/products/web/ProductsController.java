@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ua.nure.sagaresearch.products.webapi.ProductPurchaseDetailsDto;
 import ua.nure.sagaresearch.products.domain.Product;
 import ua.nure.sagaresearch.products.service.ProductService;
 import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
@@ -21,13 +22,17 @@ public class ProductsController {
 
     @PostMapping(value = "/products")
     @Operation(summary = "Create product and receive product ID", tags = "Product")
-    public String createProduct(@RequestBody CreateProductRequest request) {
-        return productService.createProduct(request).getId();
+    public ProductPurchaseDetailsDto createProduct(@RequestBody CreateProductRequest request) {
+        return convertToProductPurchaseDetailsDto(productService.createProduct(request));
     }
 
     @GetMapping(value = "/products/{productId}")
     @Operation(summary = "Get product by its ID", tags = "Product")
     public Product getProduct(@PathVariable String productId) {
         return productService.findById(productId);
+    }
+
+    private ProductPurchaseDetailsDto convertToProductPurchaseDetailsDto(Product product) {
+        return new ProductPurchaseDetailsDto(product.getId(), product.getProductQuantity(), product.getProductPrice());
     }
 }

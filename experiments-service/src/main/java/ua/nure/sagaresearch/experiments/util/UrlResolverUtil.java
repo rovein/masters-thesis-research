@@ -20,6 +20,14 @@ public final class UrlResolverUtil {
         };
     }
 
+    public static String resolveAddProductToBasketUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String addProductToBasketEndpoint = configProperties.getAddProductToBasketEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxBasketServiceUrl() + addProductToBasketEndpoint;
+            case EVENT_SOURCING -> configProperties.getSourcingBasketServiceUrl() + addProductToBasketEndpoint;
+        };
+    }
+
     private UrlResolverUtil() {
     }
 }

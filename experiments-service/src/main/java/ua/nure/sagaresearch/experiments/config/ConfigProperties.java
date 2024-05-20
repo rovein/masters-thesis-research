@@ -40,4 +40,7 @@ public class ConfigProperties {
 
     @Value("${create.product.endpoint}")
     private String createProductEndpoint;
+
+    @Value("${add.product.to.basket.endpoint}")
+    private String addProductToBasketEndpoint;
 }
