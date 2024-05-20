@@ -12,6 +12,14 @@ public final class UrlResolverUtil {
         };
     }
 
+    public static String resolveCreateProductUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String createProductEndpoint = configProperties.getCreateProductEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxProductServiceUrl() + createProductEndpoint;
+            case EVENT_SOURCING -> configProperties.getSourcingProductServiceUrl() + createProductEndpoint;
+        };
+    }
+
     private UrlResolverUtil() {
     }
 }
