@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.nure.sagaresearch.baskets.event.domain.Basket;
 import ua.nure.sagaresearch.baskets.event.service.SourcingBasketService;
@@ -24,7 +23,6 @@ import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.baskets.webapi.ProductBasketEntryDto;
 
 @RestController
-@RequestMapping("/event-sourcing")
 @RequiredArgsConstructor
 @Tag(name = "Basket", description = "Event Sourcing Basket API")
 public class SourcingBasketController {

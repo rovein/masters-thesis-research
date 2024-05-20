@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.nure.sagaresearch.products.event.domain.Product;
 import ua.nure.sagaresearch.products.event.service.SourcingProductService;
 import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
 
 @RestController
-@RequestMapping("/event-sourcing")
 @AllArgsConstructor
 @Tag(name = "Product", description = "Event Sourcing Product API")
 public class SourcingProductsController {

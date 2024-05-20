@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.nure.sagaresearch.orders.event.domain.Order;
 import ua.nure.sagaresearch.orders.event.service.SourcingOrderService;
@@ -27,7 +26,6 @@ import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
 import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 
 @RestController
-@RequestMapping("/event-sourcing")
 @RequiredArgsConstructor
 @Tag(name = "Order", description = "Event Sourcing Order API")
 public class SourcingOrderController {
