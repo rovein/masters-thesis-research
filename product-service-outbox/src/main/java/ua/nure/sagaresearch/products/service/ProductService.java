@@ -19,6 +19,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 import ua.nure.sagaresearch.common.domain.product.ProductOrderEntry;
 import ua.nure.sagaresearch.products.domain.Product;
 import ua.nure.sagaresearch.products.domain.ProductRepository;
+import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
 
 import java.util.Collections;
 import java.util.Map;
@@ -41,6 +42,16 @@ public class ProductService {
 
     public Product findById(String productId) {
         return productRepository.findById(productId).orElseThrow();
+    }
+
+    public Product createProduct(CreateProductRequest request) {
+        return productRepository.save(new Product(
+                request.getProductName(),
+                request.getDescription(),
+                request.getProductPrice(),
+                request.getImage(),
+                request.getProductQuantity()
+        ));
     }
 
     public void validateProductAddedToBasket(String productId, Long basketId, Money pricePerUnit) {

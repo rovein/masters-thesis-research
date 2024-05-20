@@ -51,6 +51,14 @@ public class Product {
         this.productProperties = Collections.emptyMap();
     }
 
+    public Product(String productName, String description, Money productPrice, String image, Long productQuantity) {
+        this.productName = productName;
+        this.description = description;
+        this.productPrice = productPrice;
+        this.image = image;
+        this.productQuantity = productQuantity;
+    }
+
     public void decreaseQuantity(long decreaseValue) {
         this.productQuantity = productQuantity - decreaseValue;
     }
