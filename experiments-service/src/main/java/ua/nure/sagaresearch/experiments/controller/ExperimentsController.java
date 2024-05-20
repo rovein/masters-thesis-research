@@ -38,7 +38,7 @@ public class ExperimentsController {
     private List<String> basketIds = new ArrayList<>();
     private List<String> productIds = new ArrayList<>();
 
-    @PostMapping(value = "/pre-setup-baskets")
+    @PostMapping(value = "/step-1/pre-setup-baskets")
     @Operation(summary = "Step 1, create N baskets", tags = "Experiments")
     public List<String> step1(@RequestParam Integer numberOfBaskets, @RequestParam ExperimentType experimentType) {
         basketIds.clear();
@@ -47,7 +47,7 @@ public class ExperimentsController {
         return basketIds;
     }
 
-    @PostMapping(value = "/pre-setup-products")
+    @PostMapping(value = "/step-2/pre-setup-products")
     @Operation(summary = "Step 2, create N products", tags = "Experiments")
     public List<String> step2(@RequestParam Integer numberOfProducts, @RequestParam ExperimentType experimentType,
                               @RequestBody CreateProductRequest createProductRequest) {

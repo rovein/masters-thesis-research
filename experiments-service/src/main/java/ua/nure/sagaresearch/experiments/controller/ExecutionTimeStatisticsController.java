@@ -27,7 +27,7 @@ public class ExecutionTimeStatisticsController {
     private final ConfigProperties configProperties;
     private final ExecutionTimeExtractorService executionTimeExtractorService;
 
-    @GetMapping("/outbox/time-statistic/add-product")
+    @GetMapping("/outbox/time-statistic/tx-1/add-product")
     @Operation(summary = "[Add product to Basket SAGA] Outbox. Get execution time of N last transactions", tags = "1. Outbox time statistic")
     public List<Long> outboxAddProductTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getBasketLogsLocation();
@@ -39,7 +39,7 @@ public class ExecutionTimeStatisticsController {
                 ADD_PRODUCT_TO_BASKET_PREFIX);
     }
 
-    @GetMapping("/outbox/time-average/add-product")
+    @GetMapping("/outbox/time-average/tx-1/add-product")
     @Operation(summary = "[Add product to Basket SAGA] Outbox. Get average execution time of N last transactions", tags = "2. Outbox average time")
     public Double outboxAddProductTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getBasketLogsLocation();
@@ -51,7 +51,7 @@ public class ExecutionTimeStatisticsController {
                 ADD_PRODUCT_TO_BASKET_PREFIX);
     }
 
-    @GetMapping("/outbox/time-statistic/place-order")
+    @GetMapping("/outbox/time-statistic/tx-2/place-order")
     @Operation(summary = "[Place order SAGA] Outbox. Get execution time of N last transactions", tags = "1. Outbox time statistic")
     public List<Long> outboxPlaceOrderTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -63,7 +63,7 @@ public class ExecutionTimeStatisticsController {
                 PLACE_ORDER_PREFIX);
     }
 
-    @GetMapping("/outbox/time-average/place-order")
+    @GetMapping("/outbox/time-average/tx-2/place-order")
     @Operation(summary = "[Place order SAGA] Outbox. Get average execution time of N last transactions", tags = "2. Outbox average time")
     public Double outboxPlaceOrderTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -75,7 +75,7 @@ public class ExecutionTimeStatisticsController {
                 PLACE_ORDER_PREFIX);
     }
 
-    @GetMapping("/outbox/time-statistic/confirm-payment")
+    @GetMapping("/outbox/time-statistic/tx-3/confirm-payment")
     @Operation(summary = "[Confirm payment SAGA] Outbox. Get execution time of N last transactions", tags = "1. Outbox time statistic")
     public List<Long> outboxConfirmPaymentTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -87,7 +87,7 @@ public class ExecutionTimeStatisticsController {
                 CONFIRM_PAYMENT_PREFIX);
     }
 
-    @GetMapping("/outbox/time-average/confirm-payment")
+    @GetMapping("/outbox/time-average/tx-3/confirm-payment")
     @Operation(summary = "[Confirm payment SAGA] Outbox. Get average execution time of N last transactions", tags = "2. Outbox average time")
     public Double outboxConfirmPaymentTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -99,7 +99,7 @@ public class ExecutionTimeStatisticsController {
                 CONFIRM_PAYMENT_PREFIX);
     }
 
-    @GetMapping("/outbox/time-statistic/cancel-order")
+    @GetMapping("/outbox/time-statistic/tx-4/cancel-order")
     @Operation(summary = "[Cancel order SAGA] Outbox. Get execution time of N last transactions", tags = "1. Outbox time statistic")
     public List<Long> outboxCancelOrderTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -111,7 +111,7 @@ public class ExecutionTimeStatisticsController {
                 CANCEL_ORDER_PREFIX);
     }
 
-    @GetMapping("/outbox/time-average/cancel-order")
+    @GetMapping("/outbox/time-average/tx-4/cancel-order")
     @Operation(summary = "[Cancel order SAGA] Outbox. Get average execution time of N last transactions", tags = "2. Outbox average time")
     public Double outboxCancelOrderTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -123,7 +123,7 @@ public class ExecutionTimeStatisticsController {
                 CANCEL_ORDER_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-statistic/add-product")
+    @GetMapping("/event-sourcing/time-statistic/tx-1/add-product")
     @Operation(summary = "[Add product to Basket SAGA] Event Sourcing. Get execution time of N last transactions", tags = "3. Event Sourcing time statistic")
     public List<Long> eventSourcingAddProductTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getBasketLogsLocation();
@@ -135,7 +135,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-average/add-product")
+    @GetMapping("/event-sourcing/time-average/tx-1/add-product")
     @Operation(
             summary = "[Add product to Basket SAGA] Event Sourcing. Get average execution time of N last transactions", tags = "4. Event Sourcing average time")
     public Double eventSourcingAddProductTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
@@ -148,7 +148,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-statistic/place-order")
+    @GetMapping("/event-sourcing/time-statistic/tx-2/place-order")
     @Operation(summary = "[Place order SAGA] Event Sourcing. Get execution time of N last transactions", tags = "3. Event Sourcing time statistic")
     public List<Long> eventSourcingPlaceOrderTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -160,7 +160,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_PLACE_ORDER_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-average/place-order")
+    @GetMapping("/event-sourcing/time-average/tx-2/place-order")
     @Operation(summary = "[Place order SAGA] Event Sourcing. Get average execution time of N last transactions", tags = "4. Event Sourcing average time")
     public Double eventSourcingPlaceOrderTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -172,7 +172,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_PLACE_ORDER_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-statistic/confirm-payment")
+    @GetMapping("/event-sourcing/time-statistic/tx-3/confirm-payment")
     @Operation(summary = "[Confirm payment SAGA] Event Sourcing. Get execution time of N last transactions", tags = "3. Event Sourcing time statistic")
     public List<Long> eventSourcingConfirmPaymentTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -184,7 +184,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-average/confirm-payment")
+    @GetMapping("/event-sourcing/time-average/tx-3/confirm-payment")
     @Operation(summary = "[Confirm payment SAGA] Event Sourcing. Get average execution time of N last transactions", tags = "4. Event Sourcing average time")
     public Double eventSourcingConfirmPaymentTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -196,7 +196,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-statistic/cancel-order")
+    @GetMapping("/event-sourcing/time-statistic/tx-4/cancel-order")
     @Operation(summary = "[Cancel order SAGA] Event Sourcing. Get execution time of N last transactions", tags = "3. Event Sourcing time statistic")
     public List<Long> eventSourcingCancelOrderTimeStatistic(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
@@ -208,7 +208,7 @@ public class ExecutionTimeStatisticsController {
                 EVENT_SOURCING_CANCEL_ORDER_PREFIX);
     }
 
-    @GetMapping("/event-sourcing/time-average/cancel-order")
+    @GetMapping("/event-sourcing/time-average/tx-4/cancel-order")
     @Operation(summary = "[Cancel order SAGA] Event Sourcing. Get average execution time of N last transactions", tags = "4. Event Sourcing average time")
     public Double eventSourcingCancelOrderTimeAverage(@RequestParam Long numberOfTransactions) throws IOException {
         String startTimeLogsLocation = configProperties.getOrderLogsLocation();
