@@ -40,9 +40,9 @@ public class BasketController {
 
     @PostMapping(value = "/baskets")
     @Operation(summary = "Create basket and receive basket ID", tags = "Basket")
-    public Long createEmptyBasket() {
+    public String createEmptyBasket() {
         Basket basket = basketService.createBasket();
-        return basket.getId();
+        return String.valueOf(basket.getId());
     }
 
     @GetMapping(value = "/baskets/{basketId}")

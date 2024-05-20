@@ -17,4 +17,24 @@ public class ConfigProperties {
     @Value("${logs.location.order}")
     private String orderLogsLocation;
 
+    @Value("${outbox.basket.service.url}")
+    private String outboxBasketServiceUrl;
+
+    @Value("${outbox.product.service.url}")
+    private String outboxProductServiceUrl;
+
+    @Value("${outbox.order.service.url}")
+    private String outboxOrderServiceUrl;
+
+    @Value("${sourcing.basket.service.url}")
+    private String sourcingBasketServiceUrl;
+
+    @Value("${sourcing.product.service.url}")
+    private String sourcingProductServiceUrl;
+
+    @Value("${sourcing.order.service.url}")
+    private String sourcingOrderServiceUrl;
+
+    @Value("${create.basket.endpoint}")
+    private String createBasketEndpoint;
 }
