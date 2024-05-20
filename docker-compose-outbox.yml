@@ -11,6 +11,7 @@ services:
     ports:
       - "8081:8081"
       - "5005:5005"
+      - "8001:8001"
     volumes:
       - ./logs/order-service.log:/logs/order-service.log
     depends_on:
@@ -21,7 +22,17 @@ services:
     restart: always
     environment:
       TZ: Europe/Kiev
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      JAVA_TOOL_OPTIONS: >
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+        -Dcom.sun.management.jmxremote
+        -Djava.rmi.server.hostname=localhost
+        -Dcom.sun.management.jmxremote.port=8001
+        -Dcom.sun.management.jmxremote.rmi.port=8001
+        -Dcom.sun.management.jmxremote.local.only=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
+        -XX:+HeapDumpOnOutOfMemoryError
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
@@ -43,6 +54,7 @@ services:
     ports:
       - "8082:8082"
       - "5006:5006"
+      - "8002:8002"
     volumes:
       - ./logs/basket-service.log:/logs/basket-service.log
     depends_on:
@@ -53,7 +65,17 @@ services:
     restart: always
     environment:
       TZ: Europe/Kiev
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      JAVA_TOOL_OPTIONS: >
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+        -Dcom.sun.management.jmxremote
+        -Djava.rmi.server.hostname=localhost
+        -Dcom.sun.management.jmxremote.port=8002
+        -Dcom.sun.management.jmxremote.rmi.port=8002
+        -Dcom.sun.management.jmxremote.local.only=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
+        -XX:+HeapDumpOnOutOfMemoryError
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
@@ -75,6 +97,7 @@ services:
     ports:
       - "8083:8083"
       - "5007:5007"
+      - "8003:8003"
     volumes:
       - ./logs/product-service.log:/logs/product-service.log
     depends_on:
@@ -85,7 +108,17 @@ services:
     restart: always
     environment:
       TZ: Europe/Kiev
-      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+      JAVA_TOOL_OPTIONS: >
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007
+        -Dcom.sun.management.jmxremote
+        -Djava.rmi.server.hostname=localhost
+        -Dcom.sun.management.jmxremote.port=8003
+        -Dcom.sun.management.jmxremote.rmi.port=8003
+        -Dcom.sun.management.jmxremote.local.only=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
+        -XX:+HeapDumpOnOutOfMemoryError
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-outbox/eventuate
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: mysqlpw
