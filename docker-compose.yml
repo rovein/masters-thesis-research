@@ -312,8 +312,6 @@ services:
     image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
     ports:
       - 3306:3306
-    volumes:
-      - ./data/database-outbox:/var/lib/mysql
     environment:
       - EVENTUATE_COMMON_VERSION=0.18.0.RELEASE
       - MYSQL_ROOT_PASSWORD=rootpassword
@@ -324,8 +322,6 @@ services:
     image: eventuateio/eventuate-mysql8:0.18.0.RELEASE
     ports:
       - 3316:3306
-    volumes:
-      - ./data/database-event-sourcing:/var/lib/mysql
     environment:
       - EVENTUATE_COMMON_VERSION=0.18.0.RELEASE
       - MYSQL_ROOT_PASSWORD=rootpassword
