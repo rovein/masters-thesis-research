@@ -28,6 +28,14 @@ public final class UrlResolverUtil {
         };
     }
 
+    public static String resolvePlaceOrderUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String placeOrderEndpoint = configProperties.getPlaceOrderEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxOrderServiceUrl() + placeOrderEndpoint;
+            case EVENT_SOURCING -> configProperties.getSourcingOrderServiceUrl() + placeOrderEndpoint;
+        };
+    }
+
     private UrlResolverUtil() {
     }
 }

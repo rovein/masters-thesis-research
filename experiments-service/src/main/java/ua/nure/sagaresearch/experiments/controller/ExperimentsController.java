@@ -5,6 +5,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveAddProductToBasketUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateBasketUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateProductUrl;
+import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolvePlaceOrderUrl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,16 @@ import ua.nure.sagaresearch.baskets.webapi.AddProductToBasketRequest;
 import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.experiments.config.ConfigProperties;
 import ua.nure.sagaresearch.experiments.util.ExperimentType;
+import ua.nure.sagaresearch.orders.webapi.CreateOrderRequest;
 import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
 import ua.nure.sagaresearch.products.webapi.ProductPurchaseDetailsDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -39,8 +44,9 @@ public class ExperimentsController {
     private final RestClient restClient;
     private final ExecutorService executorService;
 
-    private List<String> basketIds = new ArrayList<>();
-    private List<ProductPurchaseDetailsDto> products = new ArrayList<>();
+    private final List<String> basketIds = new CopyOnWriteArrayList<>();
+    private final List<ProductPurchaseDetailsDto> products = new CopyOnWriteArrayList<>();
+    private final List<String> orderIds = new ArrayList<>();
 
     @PostMapping(value = "/step-1/pre-setup-baskets")
     @Operation(summary = "Step 1, create N baskets", tags = "Experiments")
@@ -66,6 +72,9 @@ public class ExperimentsController {
     @PostMapping(value = "/step-3/add-products-to-baskets")
     @Operation(summary = "Step 3, add products to N baskets", tags = "Experiments")
     public List<BasketDtoResponse> step3(@RequestParam Integer numberOfExperiments, @RequestParam ExperimentType experimentType) throws InterruptedException {
+        if (basketIds.isEmpty() || products.isEmpty()) {
+            return Collections.emptyList();
+        }
         String addProductToBasketUrl = resolveAddProductToBasketUrl(experimentType, configProperties);
         List<BasketDtoResponse> responses = new ArrayList<>();
         for (int i = 0; i < numberOfExperiments; i++) {
@@ -76,6 +85,23 @@ public class ExperimentsController {
             Thread.sleep(100L);
         }
         return responses;
+    }
+
+    @PostMapping(value = "/step-4/place-orders")
+    @Operation(summary = "Step 4, place N orders based on N recently filled baskets", tags = "Experiments")
+    public List<String> step4(@RequestParam Integer numberOfExperiments, @RequestParam ExperimentType experimentType) throws InterruptedException {
+        if (basketIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String placeOrderUrl = resolvePlaceOrderUrl(experimentType, configProperties);
+        for (int i = 0; i < numberOfExperiments; i++) {
+            String basketId = basketIds.get(i);
+            CreateOrderRequest createOrderRequest = new CreateOrderRequest(basketId, "POST", "ONLINE", "Ukraine, Kyiv");
+            String orderId = performPostRequest(placeOrderUrl, createOrderRequest, String.class);
+            orderIds.add(orderId);
+            Thread.sleep(100L);
+        }
+        return orderIds;
     }
 
     private <T> void supplyAsyncAndWaitForAllEntityCreationTasks(Integer numberOfTasks,
