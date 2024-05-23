@@ -1,7 +1,5 @@
 package ua.nure.sagaresearch.experiments.controller;
 
-import static java.util.concurrent.CompletableFuture.allOf;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveAddProductToBasketUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveConfirmPaymentUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateBasketUrl;
@@ -11,17 +9,16 @@ import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveRetri
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
 import ua.nure.sagaresearch.baskets.webapi.AddProductToBasketRequest;
 import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.experiments.config.ConfigProperties;
 import ua.nure.sagaresearch.experiments.dto.OrderViewDto;
+import ua.nure.sagaresearch.experiments.service.RestClientHelper;
 import ua.nure.sagaresearch.experiments.util.ExperimentType;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderRequest;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
@@ -32,12 +29,7 @@ import ua.nure.sagaresearch.products.webapi.ProductPurchaseDetailsDto;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/experiments")
@@ -45,8 +37,7 @@ import java.util.stream.IntStream;
 public class ExperimentsController {
 
     private final ConfigProperties configProperties;
-    private final RestClient restClient;
-    private final ExecutorService executorService;
+    private final RestClientHelper restClientHelper;
 
     private final List<String> basketIds = new CopyOnWriteArrayList<>();
     private final List<ProductPurchaseDetailsDto> products = new CopyOnWriteArrayList<>();
@@ -58,8 +49,8 @@ public class ExperimentsController {
     public List<String> step1(@RequestParam Integer numberOfBaskets, @RequestParam ExperimentType experimentType) {
         basketIds.clear();
         String createBasketUrl = resolveCreateBasketUrl(experimentType, configProperties);
-        supplyAsyncAndWaitForAllEntityCreationTasks(numberOfBaskets,
-                () -> performPostRequest(createBasketUrl), basketIds::add);
+        restClientHelper.supplyAsyncAndWaitForAllEntityCreationTasks(numberOfBaskets,
+                () -> restClientHelper.performPostRequest(createBasketUrl), basketIds::add);
         return basketIds;
     }
 
@@ -69,8 +60,8 @@ public class ExperimentsController {
                                                  @RequestBody CreateProductRequest createProductRequest) {
         products.clear();
         String createProductUrl = resolveCreateProductUrl(experimentType, configProperties);
-        supplyAsyncAndWaitForAllEntityCreationTasks(numberOfProducts,
-                () -> performPostRequest(createProductUrl, createProductRequest, ProductPurchaseDetailsDto.class), products::add);
+        restClientHelper.supplyAsyncAndWaitForAllEntityCreationTasks(numberOfProducts,
+                () -> restClientHelper.performPostRequest(createProductUrl, createProductRequest, ProductPurchaseDetailsDto.class), products::add);
         return products;
     }
 
@@ -85,7 +76,8 @@ public class ExperimentsController {
         for (int i = 0; i < numberOfExperiments; i++) {
             String basketId = basketIds.get(i);
             AddProductToBasketRequest addProductToBasketRequest = convertToAddProductToBasketRequest(products.get(i));
-            BasketDtoResponse response = performPostRequest(addProductToBasketUrl, addProductToBasketRequest, BasketDtoResponse.class, basketId);
+            BasketDtoResponse response = restClientHelper.performPostRequest(
+                    addProductToBasketUrl, addProductToBasketRequest, BasketDtoResponse.class, basketId);
             responses.add(response);
             Thread.sleep(100L);
         }
@@ -103,7 +95,7 @@ public class ExperimentsController {
         for (int i = 0; i < numberOfExperiments; i++) {
             String basketId = basketIds.get(i);
             CreateOrderRequest createOrderRequest = new CreateOrderRequest(basketId, "POST", "ONLINE", "Ukraine, Kyiv");
-            String orderId = performPostRequest(placeOrderUrl, createOrderRequest, CreateOrderResponse.class).getOrderId();
+            String orderId = restClientHelper.performPostRequest(placeOrderUrl, createOrderRequest, CreateOrderResponse.class).getOrderId();
             orderIds.add(orderId);
             Thread.sleep(100L);
         }
@@ -120,43 +112,17 @@ public class ExperimentsController {
         String confirmPaymentUrl = resolveConfirmPaymentUrl(experimentType, configProperties);
         for (int i = 0; i < numberOfExperiments; i++) {
             String orderId = orderIds.get(i);
-            performPostRequest(confirmPaymentUrl, orderId);
+            restClientHelper.performPostRequest(confirmPaymentUrl, orderId);
             Thread.sleep(100L);
         }
 
         orderViews.clear();
         String retrieveOrderUrl = resolveRetrieveOrderUrl(experimentType, configProperties);
         for (String orderId : orderIds) {
-            GetOrderResponse getOrderResponse = performGetRequest(retrieveOrderUrl, GetOrderResponse.class, orderId);
+            GetOrderResponse getOrderResponse = restClientHelper.performGetRequest(retrieveOrderUrl, GetOrderResponse.class, orderId);
             orderViews.add(new OrderViewDto(getOrderResponse.getOrderId(), getOrderResponse.getOrderState()));
         }
         return orderViews;
-    }
-
-    private <T> void supplyAsyncAndWaitForAllEntityCreationTasks(Integer numberOfTasks,
-                                                                 Supplier<T> entityCreationTask, Consumer<T> acceptConsumer) {
-        allOf(IntStream.range(0, numberOfTasks)
-                .mapToObj(i -> supplyAsync(entityCreationTask, executorService).thenAccept(acceptConsumer))
-                .toArray(CompletableFuture[]::new)).join();
-    }
-
-    private <R> R performGetRequest(String entityRetrieveUrl, Class<R> responseType, Object... pathVariables) {
-        return restClient.get()
-                .uri(entityRetrieveUrl, pathVariables)
-                .retrieve()
-                .body(responseType);
-    }
-
-    private String performPostRequest(String entityCreationUrl, Object... pathVariables) {
-        return performPostRequest(entityCreationUrl, StringUtils.EMPTY, String.class, pathVariables);
-    }
-
-    private <T, R> R performPostRequest(String entityCreationUrl, T body, Class<R> responseType, Object... pathVariables) {
-        return restClient.post()
-                .uri(entityCreationUrl, pathVariables)
-                .body(body)
-                .retrieve()
-                .body(responseType);
     }
 
     private AddProductToBasketRequest convertToAddProductToBasketRequest(ProductPurchaseDetailsDto productPurchaseDetailsDto) {
