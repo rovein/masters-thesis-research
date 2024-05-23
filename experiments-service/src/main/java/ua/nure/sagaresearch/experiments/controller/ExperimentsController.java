@@ -1,6 +1,7 @@
 package ua.nure.sagaresearch.experiments.controller;
 
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveAddProductToBasketUrl;
+import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCancelOrderUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveConfirmPaymentUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateBasketUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateProductUrl;
@@ -110,26 +111,53 @@ public class ExperimentsController {
         }
 
         String confirmPaymentUrl = resolveConfirmPaymentUrl(experimentType, configProperties);
-        for (int i = 0; i < numberOfExperiments; i++) {
-            String orderId = orderIds.get(i);
-            restClientHelper.performPostRequest(confirmPaymentUrl, orderId);
-            Thread.sleep(100L);
-        }
+        performChangeOrderStateExperiment(numberOfExperiments, confirmPaymentUrl);
 
         orderViews.clear();
         String retrieveOrderUrl = resolveRetrieveOrderUrl(experimentType, configProperties);
         for (String orderId : orderIds) {
             GetOrderResponse getOrderResponse = restClientHelper.performGetRequest(retrieveOrderUrl, GetOrderResponse.class, orderId);
-            orderViews.add(new OrderViewDto(getOrderResponse.getOrderId(), getOrderResponse.getOrderState()));
+            orderViews.add(convertToOrderViewDto(getOrderResponse));
         }
         return orderViews;
     }
 
-    private AddProductToBasketRequest convertToAddProductToBasketRequest(ProductPurchaseDetailsDto productPurchaseDetailsDto) {
+    @PostMapping(value = "/step-6/cancel-orders")
+    @Operation(summary = "Step 6, cancel N orders", tags = "Experiments")
+    public List<OrderViewDto> step6(@RequestParam Integer numberOfExperiments, @RequestParam ExperimentType experimentType) throws InterruptedException {
+        if (orderIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String cancelOrderUrl = resolveCancelOrderUrl(experimentType, configProperties);
+        performChangeOrderStateExperiment(numberOfExperiments, cancelOrderUrl);
+
+        String retrieveOrderUrl = resolveRetrieveOrderUrl(experimentType, configProperties);
+        for (int i = 0; i < orderIds.size(); i++) {
+            String orderId = orderIds.get(i);
+            GetOrderResponse getOrderResponse = restClientHelper.performGetRequest(retrieveOrderUrl, GetOrderResponse.class, orderId);
+            orderViews.set(i, convertToOrderViewDto(getOrderResponse));
+        }
+        return orderViews;
+    }
+
+    private void performChangeOrderStateExperiment(Integer numberOfExperiments, String cancelOrderUrl) throws InterruptedException {
+        for (int i = 0; i < numberOfExperiments; i++) {
+            String orderId = orderIds.get(i);
+            restClientHelper.performPostRequest(cancelOrderUrl, orderId);
+            Thread.sleep(100L);
+        }
+    }
+
+    private static AddProductToBasketRequest convertToAddProductToBasketRequest(ProductPurchaseDetailsDto productPurchaseDetailsDto) {
         return new AddProductToBasketRequest(
                 productPurchaseDetailsDto.getProductId(),
                 productPurchaseDetailsDto.getQuantity(),
                 productPurchaseDetailsDto.getPricePerUnit()
         );
+    }
+
+    private static OrderViewDto convertToOrderViewDto(GetOrderResponse getOrderResponse) {
+        return new OrderViewDto(getOrderResponse.getOrderId(), getOrderResponse.getOrderState());
     }
 }

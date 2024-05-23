@@ -52,4 +52,7 @@ public class ConfigProperties {
 
     @Value("${confirm.payment.endpoint}")
     private String confirmPaymentEndpoint;
+
+    @Value("${cancel.order.endpoint}")
+    private String cancelOrderEndpoint;
 }

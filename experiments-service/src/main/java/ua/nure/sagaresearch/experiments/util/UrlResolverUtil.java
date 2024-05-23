@@ -52,6 +52,14 @@ public final class UrlResolverUtil {
         };
     }
 
+    public static String resolveCancelOrderUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String cancelOrderUrl = configProperties.getCancelOrderEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxOrderServiceUrl() + cancelOrderUrl;
+            case EVENT_SOURCING -> configProperties.getSourcingOrderServiceUrl() + cancelOrderUrl;
+        };
+    }
+
     private UrlResolverUtil() {
     }
 }
