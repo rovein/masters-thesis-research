@@ -36,6 +36,22 @@ public final class UrlResolverUtil {
         };
     }
 
+    public static String resolveRetrieveOrderUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String retrieveOrderEndpoint = configProperties.getRetrieveOrderEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxOrderServiceUrl() + retrieveOrderEndpoint;
+            case EVENT_SOURCING -> configProperties.getSourcingOrderServiceUrl() + retrieveOrderEndpoint;
+        };
+    }
+
+    public static String resolveConfirmPaymentUrl(ExperimentType experimentType, ConfigProperties configProperties) {
+        String confirmPaymentEndpoint = configProperties.getConfirmPaymentEndpoint();
+        return switch (experimentType) {
+            case OUTBOX -> configProperties.getOutboxOrderServiceUrl() + confirmPaymentEndpoint;
+            case EVENT_SOURCING -> configProperties.getSourcingOrderServiceUrl() + confirmPaymentEndpoint;
+        };
+    }
+
     private UrlResolverUtil() {
     }
 }

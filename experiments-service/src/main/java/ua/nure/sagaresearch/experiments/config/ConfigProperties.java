@@ -46,4 +46,10 @@ public class ConfigProperties {
 
     @Value("${place.order.endpoint}")
     private String placeOrderEndpoint;
+
+    @Value("${retrieve.order.endpoint}")
+    private String retrieveOrderEndpoint;
+
+    @Value("${confirm.payment.endpoint}")
+    private String confirmPaymentEndpoint;
 }

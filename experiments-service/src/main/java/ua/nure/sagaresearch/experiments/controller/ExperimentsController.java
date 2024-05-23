@@ -3,9 +3,11 @@ package ua.nure.sagaresearch.experiments.controller;
 import static java.util.concurrent.CompletableFuture.allOf;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveAddProductToBasketUrl;
+import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveConfirmPaymentUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateBasketUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveCreateProductUrl;
 import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolvePlaceOrderUrl;
+import static ua.nure.sagaresearch.experiments.util.UrlResolverUtil.resolveRetrieveOrderUrl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,17 @@ import org.springframework.web.client.RestClient;
 import ua.nure.sagaresearch.baskets.webapi.AddProductToBasketRequest;
 import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.experiments.config.ConfigProperties;
+import ua.nure.sagaresearch.experiments.dto.OrderViewDto;
 import ua.nure.sagaresearch.experiments.util.ExperimentType;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderRequest;
+import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
+import ua.nure.sagaresearch.orders.webapi.GetOrderResponse;
 import ua.nure.sagaresearch.products.webapi.CreateProductRequest;
 import ua.nure.sagaresearch.products.webapi.ProductPurchaseDetailsDto;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +51,7 @@ public class ExperimentsController {
     private final List<String> basketIds = new CopyOnWriteArrayList<>();
     private final List<ProductPurchaseDetailsDto> products = new CopyOnWriteArrayList<>();
     private final List<String> orderIds = new ArrayList<>();
+    private final List<OrderViewDto> orderViews = new ArrayList<>();
 
     @PostMapping(value = "/step-1/pre-setup-baskets")
     @Operation(summary = "Step 1, create N baskets", tags = "Experiments")
@@ -93,15 +98,39 @@ public class ExperimentsController {
         if (basketIds.isEmpty()) {
             return Collections.emptyList();
         }
+        orderIds.clear();
         String placeOrderUrl = resolvePlaceOrderUrl(experimentType, configProperties);
         for (int i = 0; i < numberOfExperiments; i++) {
             String basketId = basketIds.get(i);
             CreateOrderRequest createOrderRequest = new CreateOrderRequest(basketId, "POST", "ONLINE", "Ukraine, Kyiv");
-            String orderId = performPostRequest(placeOrderUrl, createOrderRequest, String.class);
+            String orderId = performPostRequest(placeOrderUrl, createOrderRequest, CreateOrderResponse.class).getOrderId();
             orderIds.add(orderId);
             Thread.sleep(100L);
         }
         return orderIds;
+    }
+
+    @PostMapping(value = "/step-5/confirm-payments-for-orders")
+    @Operation(summary = "Step 5, confirm payments for N orders", tags = "Experiments")
+    public List<OrderViewDto> step5(@RequestParam Integer numberOfExperiments, @RequestParam ExperimentType experimentType) throws InterruptedException {
+        if (orderIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String confirmPaymentUrl = resolveConfirmPaymentUrl(experimentType, configProperties);
+        for (int i = 0; i < numberOfExperiments; i++) {
+            String orderId = orderIds.get(i);
+            performPostRequest(confirmPaymentUrl, orderId);
+            Thread.sleep(100L);
+        }
+
+        orderViews.clear();
+        String retrieveOrderUrl = resolveRetrieveOrderUrl(experimentType, configProperties);
+        for (String orderId : orderIds) {
+            GetOrderResponse getOrderResponse = performGetRequest(retrieveOrderUrl, GetOrderResponse.class, orderId);
+            orderViews.add(new OrderViewDto(getOrderResponse.getOrderId(), getOrderResponse.getOrderState()));
+        }
+        return orderViews;
     }
 
     private <T> void supplyAsyncAndWaitForAllEntityCreationTasks(Integer numberOfTasks,
@@ -111,8 +140,15 @@ public class ExperimentsController {
                 .toArray(CompletableFuture[]::new)).join();
     }
 
-    private String performPostRequest(String entityCreationUrl) {
-        return performPostRequest(entityCreationUrl, StringUtils.EMPTY, String.class);
+    private <R> R performGetRequest(String entityRetrieveUrl, Class<R> responseType, Object... pathVariables) {
+        return restClient.get()
+                .uri(entityRetrieveUrl, pathVariables)
+                .retrieve()
+                .body(responseType);
+    }
+
+    private String performPostRequest(String entityCreationUrl, Object... pathVariables) {
+        return performPostRequest(entityCreationUrl, StringUtils.EMPTY, String.class, pathVariables);
     }
 
     private <T, R> R performPostRequest(String entityCreationUrl, T body, Class<R> responseType, Object... pathVariables) {
