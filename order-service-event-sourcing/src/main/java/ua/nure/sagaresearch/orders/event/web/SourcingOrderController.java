@@ -37,26 +37,28 @@ public class SourcingOrderController {
     @PostMapping(value = "/orders")
     @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
     public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        logStartTime(LOGGER, EVENT_SOURCING_PLACE_ORDER_PREFIX);
+        long startTime = System.nanoTime();
         EntityWithIdAndVersion<Order> entity = sourcingOrderService.createOrder(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),
                 createOrderRequest.getPaymentType(),
                 createOrderRequest.getShippingAddress());
-        return new CreateOrderResponse(entity.getEntityId());
+        String entityId = entity.getEntityId();
+        logStartTime(LOGGER, EVENT_SOURCING_PLACE_ORDER_PREFIX, startTime, entityId);
+        return new CreateOrderResponse(entityId);
     }
 
     @PostMapping(value = "/orders/{orderId}/confirm-payment")
     @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable String orderId) {
-        logStartTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
+        logStartTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX, orderId);
         return supplyAndConvertToResponseEntity(() -> sourcingOrderService.confirmPayment(orderId), this::convertToOrderResponseDto);
     }
 
     @PostMapping(value = "/orders/{orderId}/cancel")
     @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable String orderId) {
-        logStartTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX);
+        logStartTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX, orderId);
         return supplyAndConvertToResponseEntity(() -> sourcingOrderService.requestCancellation(orderId), this::convertToOrderResponseDto);
     }
 

@@ -9,6 +9,7 @@ import ua.nure.sagaresearch.common.domain.Money;
 @AllArgsConstructor
 @Getter
 public class UpdateBasketProductPriceCommand implements BasketCommand {
+    private String basketId;
     private String productId;
     private Money actualPricePerUnit;
 }

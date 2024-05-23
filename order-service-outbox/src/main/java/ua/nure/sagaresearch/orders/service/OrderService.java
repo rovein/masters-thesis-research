@@ -91,7 +91,7 @@ public class OrderService {
         OrderApprovedEvent event = new OrderApprovedEvent(order.getOrderDetails());
         log(logger, "{} Order {} is marked as {}, publishing {}",
                 CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
-        logEndTime(logger, CONFIRM_PAYMENT_PREFIX);
+        logEndTime(logger, CONFIRM_PAYMENT_PREFIX, orderId);
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(event));
     }
@@ -127,7 +127,7 @@ public class OrderService {
                 CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(event));
-        logEndTime(logger, CANCEL_ORDER_PREFIX);
+        logEndTime(logger, CANCEL_ORDER_PREFIX, orderId);
         return order;
     }
 

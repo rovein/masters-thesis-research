@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class HandleProductValidationCommand implements BasketCommand {
+    private String basketId;
     private String productId;
 }

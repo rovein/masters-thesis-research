@@ -42,9 +42,10 @@ public class BasketServiceEventConsumer {
 
     public void handleProductBasketAdditionValidatedEvent(DomainEventEnvelope<ProductBasketAdditionValidatedEvent> domainEventEnvelope) {
         var event = domainEventEnvelope.getEvent();
+        Long basketId = event.getBasketId();
         log(logger, "{} Received {}, transaction completed successfully for productId {} and basketId {}",
-                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), event.getBasketId());
-        logEndTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX);
+                ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), domainEventEnvelope.getAggregateId(), basketId);
+        logEndTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX, basketId);
     }
 
     private void handleProductBasketPriceHasChangedEvent(DomainEventEnvelope<ProductBasketPriceHasChangedEvent> domainEventEnvelope) {

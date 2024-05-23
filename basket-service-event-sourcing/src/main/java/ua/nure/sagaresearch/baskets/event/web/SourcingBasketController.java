@@ -47,7 +47,7 @@ public class SourcingBasketController {
     @Operation(summary = "[Add Product to Basket SAGA] starting point", tags = "Basket")
     public ResponseEntity<BasketDtoResponse> addProductToBasket(@PathVariable String basketId,
                                                                 @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
-        logStartTime(LOGGER, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX);
+        logStartTime(LOGGER, EVENT_SOURCING_ADD_PRODUCT_TO_BASKET_PREFIX, basketId);
         return supplyAndConvertToResponseEntity(() -> sourcingBasketService.addProductToBasket(
                 basketId,
                 addProductToBasketRequest.getProductId(),

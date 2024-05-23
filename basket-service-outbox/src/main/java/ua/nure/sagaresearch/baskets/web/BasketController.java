@@ -55,7 +55,7 @@ public class BasketController {
     @PostMapping(value = "/baskets/{basketId}/products")
     @Operation(summary = "[Add Product to Basket SAGA] starting point", tags = "Basket")
     public BasketDtoResponse addProductToBasket(@PathVariable Long basketId, @RequestBody AddProductToBasketRequest addProductToBasketRequest) {
-        logStartTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX);
+        logStartTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX, basketId);
         Basket basket = basketService.addProductToBasket(
                 basketId,
                 addProductToBasketRequest.getProductId(),

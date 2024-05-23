@@ -46,12 +46,16 @@ public final class LoggingUtils {
                 sagaPrefix, aggregateClass.getSimpleName(), cmd.getClass().getSimpleName(), message);
     }
 
-    public static void logStartTime(Logger logger, String sagaPrefix) {
-        log(logger, "{} {} {}", sagaPrefix, START_TIME, System.nanoTime());
+    public static void logStartTime(Logger logger, String sagaPrefix, Object entityId) {
+        logStartTime(logger, sagaPrefix, System.nanoTime(), entityId);
     }
 
-    public static void logEndTime(Logger logger, String sagaPrefix) {
-        log(logger, "{} {} {}", sagaPrefix, END_TIME, System.nanoTime());
+    public static void logStartTime(Logger logger, String sagaPrefix, long startTime, Object entityId) {
+        log(logger, "{} {} {} | ID: {}", sagaPrefix, START_TIME, startTime, entityId);
+    }
+
+    public static void logEndTime(Logger logger, String sagaPrefix, Object entityId) {
+        log(logger, "{} {} {} | ID: {}", sagaPrefix, END_TIME, System.nanoTime(), entityId);
     }
 
     private LoggingUtils() {

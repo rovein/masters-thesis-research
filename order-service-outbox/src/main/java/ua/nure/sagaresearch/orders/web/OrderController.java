@@ -51,13 +51,15 @@ public class OrderController {
     @PostMapping(value = "/orders")
     @Operation(summary = "[Place Order SAGA] starting point", tags = "Order")
     public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        logStartTime(LOGGER, PLACE_ORDER_PREFIX);
+        long startTime = System.nanoTime();
         Order order = orderService.createOrder(new OrderDetails(
                 createOrderRequest.getBasketId(),
                 createOrderRequest.getShippingType(),
                 createOrderRequest.getPaymentType(),
                 createOrderRequest.getShippingAddress()));
-        return new CreateOrderResponse(String.valueOf(order.getId()));
+        String orderId = String.valueOf(order.getId());
+        logStartTime(LOGGER, PLACE_ORDER_PREFIX, startTime, orderId);
+        return new CreateOrderResponse(orderId);
     }
 
     @GetMapping(value = "/orders/{orderId}")
@@ -72,7 +74,7 @@ public class OrderController {
     @PostMapping(value = "/orders/{orderId}/confirm-payment")
     @Operation(summary = "[Confirm Payment SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> confirmPayment(@PathVariable Long orderId) {
-        logStartTime(LOGGER, CONFIRM_PAYMENT_PREFIX);
+        logStartTime(LOGGER, CONFIRM_PAYMENT_PREFIX, orderId);
         Order order = orderService.confirmPayment(orderId);
         return makeSuccessfulResponse(order);
     }
@@ -80,7 +82,7 @@ public class OrderController {
     @PostMapping(value = "/orders/{orderId}/cancel")
     @Operation(summary = "[Cancel order SAGA] starting point", tags = "Order")
     public ResponseEntity<GetOrderResponse> cancelOrder(@PathVariable Long orderId) {
-        logStartTime(LOGGER, CANCEL_ORDER_PREFIX);
+        logStartTime(LOGGER, CANCEL_ORDER_PREFIX, orderId);
         Order order = orderService.requestCancellation(orderId);
         return makeSuccessfulResponse(order);
     }

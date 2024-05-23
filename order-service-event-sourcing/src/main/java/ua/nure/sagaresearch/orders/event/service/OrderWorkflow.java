@@ -38,7 +38,7 @@ public class OrderWorkflow {
         String orderId = event.getOrderId();
         String productId = ctx.getEntityId();
 
-        return ctx.update(Order.class, orderId, new ApplyProductQuantityReservationCommand(productId));
+        return ctx.update(Order.class, orderId, new ApplyProductQuantityReservationCommand(orderId, productId));
     }
 
     @EventHandlerMethod
@@ -48,6 +48,6 @@ public class OrderWorkflow {
         String orderId = event.getOrderId();
         String productId = ctx.getEntityId();
 
-        return ctx.update(Order.class, orderId, new ApplyProductQuantityRestorationCommand(productId));
+        return ctx.update(Order.class, orderId, new ApplyProductQuantityRestorationCommand(orderId, productId));
     }
 }

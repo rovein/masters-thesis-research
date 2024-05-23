@@ -107,7 +107,7 @@ public class Order extends ReflectiveMutableCommandProcessingAggregate<Order, Or
             SourcingOrderApprovedEvent event = new SourcingOrderApprovedEvent(this.orderDetails);
             logAggregateProcessMethod(LOGGER, this.getClass(), cmd, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX, event);
             events.add(event);
-            logEndTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX);
+            logEndTime(LOGGER, EVENT_SOURCING_CONFIRM_PAYMENT_PREFIX, cmd.getOrderId());
         }
         return events;
     }
@@ -129,7 +129,7 @@ public class Order extends ReflectiveMutableCommandProcessingAggregate<Order, Or
         if (allProductsAreRestored()) {
             SourcingOrderCancelledEvent event = new SourcingOrderCancelledEvent(this.orderDetails);
             logAggregateProcessMethod(LOGGER, this.getClass(), cmd, CANCEL_ORDER_PREFIX, event);
-            logEndTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX);
+            logEndTime(LOGGER, EVENT_SOURCING_CANCEL_ORDER_PREFIX, cmd.getOrderId());
             events.add(event);
         }
         return events;

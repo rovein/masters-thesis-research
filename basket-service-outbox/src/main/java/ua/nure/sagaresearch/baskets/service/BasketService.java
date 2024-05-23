@@ -95,7 +95,7 @@ public class BasketService {
 
         log(logger, "{} Basket {} successfully checked in and cleared, order {} is now pending for payment",
                 PLACE_ORDER_PREFIX, basketId, orderId);
-        logEndTime(logger, PLACE_ORDER_PREFIX);
+        logEndTime(logger, PLACE_ORDER_PREFIX, orderId);
     }
 
     private void publishProductAddedToBasketEvent(Long basketId, String productId, Money pricePerUnit) {

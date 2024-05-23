@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ApplyProductQuantityRestorationCommand implements OrderCommand {
+    private String orderId;
     private String productId;
 }

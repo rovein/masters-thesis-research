@@ -27,7 +27,7 @@ public class BasketWorkflow {
         String productId = ctx.getEntityId();
         String basketId = event.getBasketId();
 
-        return ctx.update(Basket.class, basketId, new HandleProductValidationCommand(productId));
+        return ctx.update(Basket.class, basketId, new HandleProductValidationCommand(basketId, productId));
     }
 
     @EventHandlerMethod
@@ -38,7 +38,7 @@ public class BasketWorkflow {
         String basketId = event.getBasketId();
         Money actualPricePerUnit = event.getActualPricePerUnit();
 
-        return ctx.update(Basket.class, basketId, new UpdateBasketProductPriceCommand(productId, actualPricePerUnit));
+        return ctx.update(Basket.class, basketId, new UpdateBasketProductPriceCommand(basketId, productId, actualPricePerUnit));
     }
 
     @EventHandlerMethod
