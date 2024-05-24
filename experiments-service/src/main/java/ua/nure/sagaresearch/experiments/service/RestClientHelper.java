@@ -20,8 +20,8 @@ public class RestClientHelper {
     private final RestClient restClient;
     private final ExecutorService executorService;
 
-    public  <T> void supplyAsyncAndWaitForAllEntityCreationTasks(Integer numberOfTasks,
-                                                                 Supplier<T> entityCreationTask, Consumer<T> acceptConsumer) {
+    public  <T> void supplyAsyncAndWaitForAllTasks(Integer numberOfTasks,
+                                                   Supplier<T> entityCreationTask, Consumer<T> acceptConsumer) {
         allOf(IntStream.range(0, numberOfTasks)
                 .mapToObj(i -> supplyAsync(entityCreationTask, executorService).thenAccept(acceptConsumer))
                 .toArray(CompletableFuture[]::new)).join();

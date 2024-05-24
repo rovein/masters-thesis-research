@@ -50,7 +50,7 @@ public class ExperimentsController {
     public List<String> step1(@RequestParam Integer numberOfBaskets, @RequestParam ExperimentType experimentType) {
         basketIds.clear();
         String createBasketUrl = resolveCreateBasketUrl(experimentType, configProperties);
-        restClientHelper.supplyAsyncAndWaitForAllEntityCreationTasks(numberOfBaskets,
+        restClientHelper.supplyAsyncAndWaitForAllTasks(numberOfBaskets,
                 () -> restClientHelper.performPostRequest(createBasketUrl), basketIds::add);
         return basketIds;
     }
@@ -61,7 +61,7 @@ public class ExperimentsController {
                                                  @RequestBody CreateProductRequest createProductRequest) {
         products.clear();
         String createProductUrl = resolveCreateProductUrl(experimentType, configProperties);
-        restClientHelper.supplyAsyncAndWaitForAllEntityCreationTasks(numberOfProducts,
+        restClientHelper.supplyAsyncAndWaitForAllTasks(numberOfProducts,
                 () -> restClientHelper.performPostRequest(createProductUrl, createProductRequest, ProductPurchaseDetailsDto.class), products::add);
         return products;
     }
