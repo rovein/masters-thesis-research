@@ -21,6 +21,9 @@ public final class LoggingUtils {
 
     public static final String START_TIME = "Start time:";
     public static final String END_TIME = "End time:";
+    public static final String SAGA_PREFIX_CLOSING = "]";
+    public static final String ID_MARKER = "ID:";
+    public static final String TIME_AND_ID_SEPARATOR = "|";
 
     /**
      * Util logging method that has small delay needed to correctly display the order of logs
