@@ -20,6 +20,7 @@ import ua.nure.sagaresearch.baskets.webapi.BasketDtoResponse;
 import ua.nure.sagaresearch.experiments.config.ConfigProperties;
 import ua.nure.sagaresearch.experiments.dto.OrderViewDto;
 import ua.nure.sagaresearch.experiments.service.RestClientHelper;
+import ua.nure.sagaresearch.experiments.util.ExecutionType;
 import ua.nure.sagaresearch.experiments.util.ExperimentType;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderRequest;
 import ua.nure.sagaresearch.orders.webapi.CreateOrderResponse;
@@ -50,8 +51,11 @@ public class ExperimentsController {
     public List<String> step1(@RequestParam Integer numberOfBaskets, @RequestParam ExperimentType experimentType) {
         basketIds.clear();
         String createBasketUrl = resolveCreateBasketUrl(experimentType, configProperties);
-        restClientHelper.supplyAsyncAndWaitForAllTasks(numberOfBaskets,
-                () -> restClientHelper.performPostRequest(createBasketUrl), basketIds::add);
+        restClientHelper.supplyAsyncAndWaitForAllTasks(
+                numberOfBaskets,
+                experimentNumber ->
+                        restClientHelper.performPostRequest(createBasketUrl),
+                basketIds::add);
         return basketIds;
     }
 
@@ -61,27 +65,46 @@ public class ExperimentsController {
                                                  @RequestBody CreateProductRequest createProductRequest) {
         products.clear();
         String createProductUrl = resolveCreateProductUrl(experimentType, configProperties);
-        restClientHelper.supplyAsyncAndWaitForAllTasks(numberOfProducts,
-                () -> restClientHelper.performPostRequest(createProductUrl, createProductRequest, ProductPurchaseDetailsDto.class), products::add);
+        restClientHelper.supplyAsyncAndWaitForAllTasks(
+                numberOfProducts,
+                experimentNumber ->
+                        restClientHelper.performPostRequest(createProductUrl, createProductRequest, ProductPurchaseDetailsDto.class),
+                products::add);
         return products;
     }
 
     @PostMapping(value = "/step-3/add-products-to-baskets")
     @Operation(summary = "Step 3, add products to N baskets", tags = "Experiments")
-    public List<BasketDtoResponse> step3(@RequestParam Integer numberOfExperiments, @RequestParam ExperimentType experimentType) throws InterruptedException {
+    public List<BasketDtoResponse> step3(@RequestParam Integer numberOfExperiments,
+                                         @RequestParam ExperimentType experimentType,
+                                         @RequestParam ExecutionType executionType) throws InterruptedException {
         if (basketIds.isEmpty() || products.isEmpty()) {
             return Collections.emptyList();
         }
+
         String addProductToBasketUrl = resolveAddProductToBasketUrl(experimentType, configProperties);
-        List<BasketDtoResponse> responses = new ArrayList<>();
-        for (int i = 0; i < numberOfExperiments; i++) {
-            String basketId = basketIds.get(i);
-            AddProductToBasketRequest addProductToBasketRequest = convertToAddProductToBasketRequest(products.get(i));
-            BasketDtoResponse response = restClientHelper.performPostRequest(
-                    addProductToBasketUrl, addProductToBasketRequest, BasketDtoResponse.class, basketId);
-            responses.add(response);
-            Thread.sleep(100L);
+        List<BasketDtoResponse> responses;
+
+        if (executionType == ExecutionType.ITERATIVE) {
+            responses = new ArrayList<>();
+            for (int i = 0; i < numberOfExperiments; i++) {
+                String basketId = basketIds.get(i);
+                AddProductToBasketRequest addProductToBasketRequest = convertToAddProductToBasketRequest(products.get(i));
+                BasketDtoResponse response = restClientHelper.performPostRequest(
+                        addProductToBasketUrl, addProductToBasketRequest, BasketDtoResponse.class, basketId);
+                responses.add(response);
+                Thread.sleep(100L);
+            }
+        } else {
+            responses = new CopyOnWriteArrayList<>();
+            restClientHelper.supplyAsyncAndWaitForAllTasks(numberOfExperiments,
+                    experimentNumber -> {
+                        String basketId = basketIds.get(experimentNumber);
+                        AddProductToBasketRequest addProductToBasketRequest = convertToAddProductToBasketRequest(products.get(experimentNumber));
+                        return restClientHelper.performPostRequest(addProductToBasketUrl, addProductToBasketRequest, BasketDtoResponse.class, basketId);
+                    }, responses::add);
         }
+
         return responses;
     }
 
