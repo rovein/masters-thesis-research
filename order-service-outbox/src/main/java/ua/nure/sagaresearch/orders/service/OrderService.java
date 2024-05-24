@@ -124,7 +124,7 @@ public class OrderService {
         order.cancel();
         OrderCancelledEvent event = new OrderCancelledEvent(order.getOrderDetails());
         log(logger, "{} Order {} is marked as {}, publishing {}",
-                CONFIRM_PAYMENT_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
+                CANCEL_ORDER_PREFIX, orderId, order.getState(), event.getClass().getSimpleName());
         domainEventPublisher.publish(Order.class,
                 orderId, singletonList(event));
         logEndTime(logger, CANCEL_ORDER_PREFIX, orderId);
