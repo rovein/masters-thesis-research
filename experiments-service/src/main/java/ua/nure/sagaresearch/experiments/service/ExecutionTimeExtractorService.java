@@ -72,12 +72,16 @@ public class ExecutionTimeExtractorService {
     private static ArrayList<Long> calculateTotalTimeForExperiments(List<String> experimentLogs) {
         var result = new ArrayList<Long>();
 
-        groupStartEndTimesByLogId(experimentLogs).forEach((id, times) -> {
-            var endTime = retrieveTime(times, END_TIME);
-            var startTime = retrieveTime(times, START_TIME);
-            var totalTimeInNano = endTime - startTime;
-            result.add(totalTimeInNano / NANO_TO_MILLI_SCALE);
-        });
+        groupStartEndTimesByLogId(experimentLogs).entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().size() == 2)
+                .forEach(entry -> {
+                    var times = entry.getValue();
+                    var endTime = retrieveTime(times, END_TIME);
+                    var startTime = retrieveTime(times, START_TIME);
+                    var totalTimeInNano = endTime - startTime;
+                    result.add(totalTimeInNano / NANO_TO_MILLI_SCALE);
+                });
 
         return result;
     }
