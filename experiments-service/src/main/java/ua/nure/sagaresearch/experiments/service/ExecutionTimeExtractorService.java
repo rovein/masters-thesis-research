@@ -96,6 +96,6 @@ public class ExecutionTimeExtractorService {
                 .map(String::trim)
                 .map(Long::parseLong)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalStateException("Unable to find %s in %s".formatted(timePrefix, times)));
     }
 }
