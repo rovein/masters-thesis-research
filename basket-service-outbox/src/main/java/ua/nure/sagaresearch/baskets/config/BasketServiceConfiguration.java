@@ -3,7 +3,6 @@ package ua.nure.sagaresearch.baskets.config;
 import io.eventuate.tram.events.common.DomainEvent;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcher;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcherFactory;
-import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
 import io.eventuate.tram.viewsupport.rebuild.DBLockService;
 import io.eventuate.tram.viewsupport.rebuild.DomainEventWithEntityId;
 import io.eventuate.tram.viewsupport.rebuild.DomainSnapshotExportService;
@@ -18,7 +17,7 @@ import ua.nure.sagaresearch.baskets.domain.events.BasketSnapshotEvent;
 import ua.nure.sagaresearch.baskets.service.BasketServiceEventConsumer;
 
 @Configuration
-@Import({OptimisticLockingDecoratorConfiguration.class, SnapshotConfiguration.class})
+@Import({SnapshotConfiguration.class})
 public class BasketServiceConfiguration {
 
     @Bean

@@ -4,7 +4,7 @@ import io.eventuate.tram.events.common.DomainEvent;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcher;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcherFactory;
-import io.eventuate.tram.spring.optimisticlocking.OptimisticLockingDecoratorConfiguration;
+import io.eventuate.tram.spring.consumer.common.TramNoopDuplicateMessageDetectorConfiguration;
 import io.eventuate.tram.viewsupport.rebuild.DBLockService;
 import io.eventuate.tram.viewsupport.rebuild.DomainEventWithEntityId;
 import io.eventuate.tram.viewsupport.rebuild.DomainSnapshotExportService;
@@ -20,7 +20,7 @@ import ua.nure.sagaresearch.orders.service.OrderService;
 import ua.nure.sagaresearch.orders.service.OrderServiceEventConsumer;
 
 @Configuration
-@Import({OptimisticLockingDecoratorConfiguration.class, SnapshotConfiguration.class})
+@Import({SnapshotConfiguration.class, TramNoopDuplicateMessageDetectorConfiguration.class})
 public class OrderConfiguration {
 
     @Bean
