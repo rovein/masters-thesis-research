@@ -53,7 +53,7 @@ public class ExperimentsController {
     @PostMapping(value = "/step-1/pre-setup-baskets")
     @Operation(summary = "Step 1, create N baskets", tags = "Experiments")
     public List<String> step1(@RequestParam Integer numberOfBaskets, @RequestParam ExperimentType experimentType) {
-        basketIds.clear();
+        clearAll();
         String createBasketUrl = resolveCreateBasketUrl(experimentType, configProperties);
         restClientHelper.supplyAsyncAndWaitForAllTasks(
                 numberOfBaskets,
@@ -216,5 +216,12 @@ public class ExperimentsController {
 
     private static OrderViewDto convertToOrderViewDto(GetOrderResponse getOrderResponse) {
         return new OrderViewDto(getOrderResponse.getOrderId(), getOrderResponse.getOrderState());
+    }
+
+    private void clearAll() {
+        basketIds.clear();
+        products.clear();
+        orderIds.clear();
+        orderViews.clear();
     }
 }
