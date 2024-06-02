@@ -58,6 +58,7 @@ public class BasketServiceEventConsumer {
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId, actualPricePerUnit.getAmount());
 
         basketService.actualizeProductEntryPrice(basketId, productId, actualPricePerUnit);
+        logEndTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX, basketId);
     }
 
     public void handleProductBasketAdditionValidationFailedEvent(DomainEventEnvelope<ProductBasketAdditionValidationFailedEvent> domainEventEnvelope) {
@@ -69,6 +70,7 @@ public class BasketServiceEventConsumer {
                 ADD_PRODUCT_TO_BASKET_PREFIX, event.getClass().getSimpleName(), productId, basketId);
 
         basketService.removeProductEntry(basketId, productId);
+        logEndTime(logger, ADD_PRODUCT_TO_BASKET_PREFIX, basketId);
     }
 
     private void handleOrderPlacementRequestedEvent(DomainEventEnvelope<OrderPlacementRequestedEvent> domainEventEnvelope) {
